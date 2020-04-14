@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
+require 'spec_helper'
 
 RSpec.describe FService::Base do
   describe '#success' do
@@ -16,6 +16,19 @@ RSpec.describe FService::Base do
   end
 
   describe '#result' do
+    subject(:response) { described_class.new.result(condition) }
+
+    context 'when condition is true' do
+      let(:condition) { 1 < 2 }
+
+      it { expect(response).to be_successful }
+    end
+
+    context 'when condition is false' do
+      let(:condition) { 1 > 2 }
+
+      it { expect(response).to be_failed }
+    end
   end
 
   describe '.call' do
