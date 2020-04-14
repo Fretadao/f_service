@@ -12,13 +12,17 @@ RSpec.describe FService::Result::Failure do
   it { expect(failure.value).to eq(nil) }
   it { expect { failure.value! }.to raise_error FService::Result::Error }
 
-  it 'runs on the failure path' do
-    expect(
-      failure.on(
+  context 'when matching results' do
+    subject(:failure_match) do
+      described_class.new('Whoops!').on(
         success: ->(_value) { raise "This wont't ever run" },
         failure: ->(error) { return error + '!' }
       )
-    ).to eq('Whoops!!')
+    end
+
+    it 'runs on the failure path' do
+      expect(failure_match).to eq('Whoops!!')
+    end
   end
 
   context 'when chaining results' do
