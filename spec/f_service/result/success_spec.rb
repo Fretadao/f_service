@@ -7,9 +7,19 @@ RSpec.describe FService::Result::Success do
 
   it { expect(success).to be_a described_class }
   it { expect(success).to be_successful }
+  it { expect(success).not_to be_failed }
   it { expect(success.value).to eq('Yay!') }
   it { expect(success.error).to eq(nil) }
   it { expect(success.value!).to eq('Yay!') }
+
+  it 'runs on the success path' do
+    expect(
+      success.on(
+        success: ->(value) { return value + '!' },
+        failure: ->(_error) { raise "This wont't ever run" }
+      )
+    ).to eq('Yay!!')
+  end
 
   context 'when chaining results' do
     subject(:chain) do

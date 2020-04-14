@@ -7,9 +7,19 @@ RSpec.describe FService::Result::Failure do
 
   it { expect(failure).to be_a described_class }
   it { expect(failure).to be_failed }
+  it { expect(failure).not_to be_successful }
   it { expect(failure.error).to eq('Whoops!') }
   it { expect(failure.value).to eq(nil) }
   it { expect { failure.value! }.to raise_error FService::Result::Error }
+
+  it 'runs on the failure path' do
+    expect(
+      failure.on(
+        success: ->(_value) { raise "This wont't ever run" },
+        failure: ->(error) { return error + '!' }
+      )
+    ).to eq('Whoops!!')
+  end
 
   context 'when chaining results' do
     subject(:chain) do
