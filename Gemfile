@@ -6,7 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'rake', '~> 10.0'
+  gem 'rake', '~> 13.0'
   gem 'rubocop', '~> 0.81.0', require: false
   gem 'rubocop-rspec', require: false
 end
