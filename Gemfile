@@ -2,7 +2,7 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in reserv.gemspec
+# Specify your gem's dependencies in f_service.gemspec
 gemspec
 
 group :development, :test do

@@ -2,11 +2,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'reserv/version'
+require 'f_service/version'
 
 Gem::Specification.new do |spec|
-  spec.name    = 'reserv'
-  spec.version = Reserv::VERSION
+  spec.name    = 'f_service'
+  spec.version = FService::VERSION
   spec.authors = ['Matheus Richard']
   spec.email   = ['matheusrichardt@gmail.com']
 
@@ -15,11 +15,11 @@ Gem::Specification.new do |spec|
     A service base class that uses the Result monad.
   DESCRIPTION
 
-  spec.homepage = 'https://github.com/Fretadao/reserv'
+  spec.homepage = 'https://github.com/Fretadao/f_service'
   spec.license  = 'MIT'
 
   spec.metadata['homepage_uri']    = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/Fretadao/reserv'
+  spec.metadata['source_code_uri'] = 'https://github.com/Fretadao/f_service'
   # spec.metadata['changelog_uri'] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Reserv
+module FService
   class Error < StandardError; end
 
   module Result

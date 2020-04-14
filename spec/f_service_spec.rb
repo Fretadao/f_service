@@ -2,11 +2,11 @@
 
 require_relative 'spec_helper'
 
-RSpec.describe Reserv::Base do
+RSpec.describe FService::Base do
   describe '#success' do
     subject(:response) { described_class.new.success('yay!') }
 
-    it { expect(response).to be_a Reserv::Result::Success }
+    it { expect(response).to be_a FService::Result::Success }
     it { expect(response).to be_successful }
     it { expect(response.value).to eq('yay!') }
     it { expect(response.error).to eq(nil) }
@@ -16,11 +16,11 @@ RSpec.describe Reserv::Base do
   describe '#failure' do
     subject(:response) { described_class.new.failure('Whoops!') }
 
-    it { expect(response).to be_a Reserv::Result::Failure }
+    it { expect(response).to be_a FService::Result::Failure }
     it { expect(response).to be_failed }
     it { expect(response.error).to eq('Whoops!') }
     it { expect(response.value).to eq(nil) }
-    it { expect { response.value! }.to raise_error Reserv::Result::Error }
+    it { expect { response.value! }.to raise_error FService::Result::Error }
   end
 
   describe '#result' do
@@ -43,6 +43,6 @@ RSpec.describe Reserv::Base do
     end
 
     it { expect(test_service.call).to be_successful }
-    it { expect { error_test_service.call }.to raise_error Reserv::Error, 'Services must return a Result' }
+    it { expect { error_test_service.call }.to raise_error FService::Error, 'Services must return a Result' }
   end
 end

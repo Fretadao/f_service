@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Reserv
+module FService
   module Result
     class Base
       %i[initialize then successful? failed? value value! error].each do |method_name|

@@ -2,7 +2,7 @@
 
 require_relative 'base'
 
-module Reserv
+module FService
   module Result
     class Success < Result::Base
       attr_reader :value

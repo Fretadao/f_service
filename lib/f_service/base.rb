@@ -4,21 +4,21 @@ require_relative 'result/base'
 require_relative 'result/failure'
 require_relative 'result/success'
 
-module Reserv
+module FService
   class Base
     def self.call(*params)
       result = new(*params).run
-      raise(Reserv::Error, 'Services must return a Result') unless result.is_a? Result::Base
+      raise(FService::Error, 'Services must return a Result') unless result.is_a? Result::Base
 
       result
     end
 
     def success(data = nil)
-      Reserv::Result::Success.new(data)
+      FService::Result::Success.new(data)
     end
 
     def failure(data = nil)
-      Reserv::Result::Failure.new(data)
+      FService::Result::Failure.new(data)
     end
 
     def result(condition, data = nil)

@@ -3,7 +3,7 @@
 require_relative 'base'
 require_relative '../errors'
 
-module Reserv
+module FService
   module Result
     class Failure < Result::Base
       attr_reader :error
