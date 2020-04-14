@@ -3,3 +3,7 @@ require:
 
 Layout/LineLength:
   Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
