@@ -6,9 +6,13 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem "rake", "~> 13.0.0"
+  gem 'rake', '~> 13.0.0'
   gem 'rubocop', '~> 0.81.0', require: false
   gem 'rubocop-rspec', require: false
+end
+
+group :optional do
+  gem 'solargraph'
 end
 
 group :test do
