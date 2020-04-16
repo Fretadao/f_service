@@ -39,15 +39,17 @@ RSpec.describe FService::Base do
         end
       end
     end
-    let(:error_test_service) do
+    let(:service_with_invalid_return) do
       Class.new(described_class) do
         def run
           'This should be a Result'
         end
       end
     end
+    let(:service_without_run) { Class.new(described_class) }
 
     it { expect(test_service.call).to be_successful }
-    it { expect { error_test_service.call }.to raise_error FService::Error, 'Services must return a Result' }
+    it { expect { service_with_invalid_return.call }.to raise_error FService::Error, 'Services must return a Result' }
+    it { expect { service_without_run.call }.to raise_error NotImplementedError, 'Services must implement #run' }
   end
 end

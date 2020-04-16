@@ -13,6 +13,10 @@ module FService
       result
     end
 
+    def run
+      raise NotImplementedError, 'Services must implement #run'
+    end
+
     def success(data = nil)
       FService::Result::Success.new(data)
     end
