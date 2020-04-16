@@ -84,6 +84,7 @@ DEPENDENCIES
   rubocop-rspec
   simplecov
   solargraph
+  yard
 
 BUNDLED WITH
    2.0.2

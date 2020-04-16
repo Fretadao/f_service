@@ -11,6 +11,10 @@ group :development, :test do
   gem 'rubocop-rspec', require: false
 end
 
+group :docs do
+  gem 'yard'
+end
+
 group :optional do
   gem 'solargraph'
 end
