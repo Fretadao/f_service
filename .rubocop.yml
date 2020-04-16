@@ -10,3 +10,6 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
+
+Style/DocumentationMethod:
+  Enabled: true
