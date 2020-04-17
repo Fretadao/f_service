@@ -21,11 +21,23 @@ module FService
       end
 
       # Returns true.
+      #
+      #
+      # @example
+      #   # Suppose that User::Update returns a FService::Result
+      #
+      #   log_errors(user) unless User::Update.(user: user).successful?
       def successful?
         true
       end
 
       # Returns false.
+      #
+      #
+      # @example
+      #   # Suppose that User::Update returns a FService::Result
+      #
+      #   log_errors(user) if User::Update.(user: user).failed?
       def failed?
         false
       end
@@ -35,7 +47,7 @@ module FService
         value
       end
 
-      # Succesful operations do not have error.
+      # Successful operations do not have error.
       #
       # @return [nil]
       def error
