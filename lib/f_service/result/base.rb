@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module FService
+  # Includes representations of operations that can be successful or failed.
   module Result
     # Abstract base class for Result::Success and Result::Failure.
     #

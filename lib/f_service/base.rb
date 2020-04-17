@@ -5,6 +5,9 @@ require_relative 'result/failure'
 require_relative 'result/success'
 
 module FService
+  # Abstract base class for services. It provides
+  #
+  # @abstract
   class Base
     def self.call(*params)
       result = new(*params).run
