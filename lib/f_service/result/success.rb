@@ -24,7 +24,7 @@ module FService
       #
       #
       # @example
-      #   # Suppose that User::Update returns a FService::Result
+      #   # Suppose that User::Update returns an FService::Result
       #
       #   log_errors(user) unless User::Update.(user: user).successful?
       def successful?
@@ -35,7 +35,7 @@ module FService
       #
       #
       # @example
-      #   # Suppose that User::Update returns a FService::Result
+      #   # Suppose that User::Update returns an FService::Result
       #
       #   log_errors(user) if User::Update.(user: user).failed?
       def failed?
