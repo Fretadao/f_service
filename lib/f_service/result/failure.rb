@@ -62,8 +62,8 @@ module FService
       #
       #
       # @example
-      #   puts FService::Result::Failure.new("Yay!")
-      #   # => Failure("Yay!")
+      #   puts FService::Result::Failure.new("Oh no!")
+      #   # => Failure("Oh no!")
       #
       # @return [String] the object's string representation
       def to_s
