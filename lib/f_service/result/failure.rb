@@ -57,6 +57,18 @@ module FService
       def then
         self
       end
+
+      # Outputs a string representation of the object
+      #
+      #
+      # @example
+      #   puts FService::Result::Failure.new("Yay!")
+      #   # => Failure("Yay!")
+      #
+      # @return [String] the object's string representation
+      def to_s
+        error.nil? ? 'Failure()' : "Failure(#{error.inspect})"
+      end
     end
   end
 end

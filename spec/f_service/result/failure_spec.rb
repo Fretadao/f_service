@@ -38,4 +38,8 @@ RSpec.describe FService::Result::Failure do
       expect(chain.error).to eq('This... Fails!')
     end
   end
+
+  describe '#to_s' do
+    it { expect(failure.to_s).to eq 'Failure("Whoops!")' }
+  end
 end

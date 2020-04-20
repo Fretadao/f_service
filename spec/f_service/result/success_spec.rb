@@ -38,4 +38,8 @@ RSpec.describe FService::Result::Success do
       expect(chain.value).to eq('Yay! It works!')
     end
   end
+
+  describe '#to_s' do
+    it { expect(success.to_s).to eq 'Success("Yay!")' }
+  end
 end

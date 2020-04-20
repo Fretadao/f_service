@@ -58,6 +58,18 @@ module FService
       def then
         yield value
       end
+
+      # Outputs a string representation of the object
+      #
+      #
+      # @example
+      #   puts FService::Result::Success.new("Yay!")
+      #   # => Success("Yay!")
+      #
+      # @return [String] the object's string representation
+      def to_s
+        value.nil? ? 'Success()' : "Success(#{value.inspect})"
+      end
     end
   end
 end
