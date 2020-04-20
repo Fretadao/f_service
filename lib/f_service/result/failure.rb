@@ -6,6 +6,7 @@ require_relative '../errors'
 module FService
   module Result
     # Represents a value of a failed operation.
+    # The error field can contain any information you want.
     #
     # @api public
     class Failure < Result::Base

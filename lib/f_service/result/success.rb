@@ -5,6 +5,7 @@ require_relative 'base'
 module FService
   module Result
     # Represents a value of a successful operation.
+    # The value field can contain any information you want.
     #
     # @api public
     class Success < Result::Base
