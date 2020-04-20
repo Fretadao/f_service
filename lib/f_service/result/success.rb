@@ -55,7 +55,26 @@ module FService
         nil
       end
 
-      # @param [Block]
+      # Returns its value to the given block.
+      # Use this to chain multiple service calls (since all services return Results).
+      #
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def create
+      #       result = User::Create.(user_params)
+      #                 .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                 .then { |user| User::Login.(user: user) }
+      #
+      #       if result.successful?
+      #         json_success(result.value)
+      #       else
+      #         json_error(result.error)
+      #       end
+      #     end
+      #   end
+      #
+      # @yieldparam [result] value pass {#value} to a block
       def then
         yield value
       end

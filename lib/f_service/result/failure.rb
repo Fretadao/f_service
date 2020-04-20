@@ -55,6 +55,27 @@ module FService
         raise Result::Error, 'Failure objects do not have value'
       end
 
+      # Returns itself to the given block.
+      # Use this to chain multiple service calls (since all services return Results).
+      # It will short circuit your service call chain.
+      #
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def create
+      #       result = User::Create.(user_params) # if this fails the following calls won't run
+      #                 .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                 .then { |user| User::Login.(user: user) }
+      #
+      #       if result.successful?
+      #         json_success(result.value)
+      #       else
+      #         json_error(result.error)
+      #       end
+      #     end
+      #   end
+      #
+      # @return [self]
       def then
         self
       end
