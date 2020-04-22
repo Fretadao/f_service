@@ -102,7 +102,7 @@ module FService
     # given the condition.
     #
     # @example
-    #   class YearIsEven < FService::Base
+    #   class YearIsLeap < FService::Base
     #     def initialize(year:)
     #       @year = year
     #     end
