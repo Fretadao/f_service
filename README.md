@@ -1,8 +1,8 @@
 # FService
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/f_service`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+FService is a small gem that provides a base class for your services (aka operations).
+The goal is to make services simpler, safer and more composable.
+It uses the Result monad for handling operations.
 
 ## Installation
 
@@ -22,7 +22,50 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+To start using it, you have to create your service class inheriting from FService::Base.
+
+```ruby
+class User::UpdateName < FService::Base
+end
+```
+
+Now, define your initializer to setup data.
+```ruby
+class User::UpdateName < FService::Base
+  def initialize(user:, new_name:)
+    @user = user
+    @new_name = new_name
+  end
+end
+```
+
+The next step is writing the `#run` method, which is where the work should be done.
+Use the methods `#success` and `#failure` to handle your return values. The return can be any value.
+
+```ruby
+class User::UpdateName < FService::Base
+  # ...
+  def run
+    return failure("No user given") if @user.nil?
+
+    if @user.update(name: @new_name)
+      success(status: "Updated", data: @user)
+    else
+      failure(status: "Name not updated", data: @user.errors)
+    end
+  end
+end
+```
+
+To use your service use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work) but you can use it in the form you like most.
+
+```ruby
+User::UpdateName.(user: user, new_name: new_name)
+```
+
+> Remember, you **have** to return an `FService::Result` at the end of your services.
+
+You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
 
 ## Development
 
@@ -32,7 +75,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/f_service.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Fretadao/f_service.
 
 ## License
 
