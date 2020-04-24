@@ -21,20 +21,19 @@ Or install it yourself as:
     $ gem install f_service
 
 ## Usage
-
+### Creating your service
 To start using it, you have to create your service class inheriting from FService::Base.
 
 ```ruby
-class User::UpdateName < FService::Base
+class User::Create < FService::Base
 end
 ```
 
 Now, define your initializer to setup data.
 ```ruby
-class User::UpdateName < FService::Base
-  def initialize(user:, new_name:)
-    @user = user
-    @new_name = new_name
+class User::Create < FService::Base
+  def initialize(name:)
+    @name = name
   end
 end
 ```
@@ -43,27 +42,56 @@ The next step is writing the `#run` method, which is where the work should be do
 Use the methods `#success` and `#failure` to handle your return values. The return can be any value.
 
 ```ruby
-class User::UpdateName < FService::Base
+class User::Create < FService::Base
   # ...
   def run
-    return failure("No user given") if @user.nil?
+    return failure("No name given") if @name.nil?
 
-    if @user.update(name: @new_name)
-      success(status: "Updated", data: @user)
+    user = UserRepository.create(name: @name)
+    if user.valid?
+      success(status: "User successfully created!", data: user)
     else
-      failure(status: "Name not updated", data: @user.errors)
+      failure(status: "User could not be created!", data: user.errors)
     end
   end
 end
 ```
+> Remember, you **have** to return an `FService::Result` at the end of your services.
 
-To use your service use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work) but you can use it in the form you like most.
+### Using your service
+
+To run your service use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work) but you can use it in the form you like most.
 
 ```ruby
-User::UpdateName.(user: user, new_name: new_name)
+User::Create.(name: name)
+# or
+User::Create.call(name: name)
 ```
 
-> Remember, you **have** to return an `FService::Result` at the end of your services.
+> We do **not** recommend manually initializing your service because it **will not** type check your result!
+
+### Using the result
+
+Use the methods `#successful?` and `#failed?` to check the status of your result. If it is successful you can access the value with `#value`, and if your service failed, you can access the error with `#error`.
+
+A hypothetical controller action using the example service could look like this:
+
+```ruby
+class UsersController < BaseController
+  def create
+    result = User::Create.(user_params)
+
+    if result.successful?
+      json_success(result.value)
+    else
+      json_error(result.error)
+    end
+  end
+end
+```
+> Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects) afterall, so you can use in controllers, models, etc (even other services!).
+
+## API Docs
 
 You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
 

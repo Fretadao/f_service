@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    f_service (0.1.0)
+    f_service (0.1.1)
 
 GEM
   remote: https://rubygems.org/
