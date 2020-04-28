@@ -1,7 +1,7 @@
 # FService
 
 FService is a small gem that provides a base class for your services (aka operations).
-The goal is to make services simpler, safer and more composable.
+The goal is to make services simpler, safer, and more composable.
 It uses the Result monad for handling operations.
 
 ## Installation
@@ -60,7 +60,7 @@ end
 
 ### Using your service
 
-To run your service use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work) but you can use it in the form you like most.
+To run your service, use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work), but you can use it in the form you like most.
 
 ```ruby
 User::Create.(name: name)
@@ -72,7 +72,7 @@ User::Create.call(name: name)
 
 ### Using the result
 
-Use the methods `#successful?` and `#failed?` to check the status of your result. If it is successful you can access the value with `#value`, and if your service failed, you can access the error with `#error`.
+Use the methods `#successful?` and `#failed?` to check the status of your result. If it is successful, you can access the value with `#value`, and if your service fails, you can access the error with `#error`.
 
 A hypothetical controller action using the example service could look like this:
 
@@ -89,7 +89,7 @@ class UsersController < BaseController
   end
 end
 ```
-> Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects) afterall, so you can use in controllers, models, etc (even other services!).
+> Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects), so you can use in controllers, models, etc. (even other services!).
 
 ### Pattern matching
 The code above could be rewritten using the `#on` matcher too. It works similar to pattern matching:
@@ -132,7 +132,7 @@ You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that allows you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
@@ -142,4 +142,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Fretad
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open-source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
