@@ -12,7 +12,9 @@ Gem::Specification.new do |spec|
 
   spec.summary     = 'A small, monad-based service class'
   spec.description = <<-DESCRIPTION
-    A service base class that uses the Result monad.
+    FService is a small gem that provides a base class for your services (aka operations).
+    The goal is to make services simpler, safer and more composable.
+    It uses the Result monad for handling operations.
   DESCRIPTION
 
   spec.homepage = 'https://github.com/Fretadao/f_service'
@@ -20,6 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['homepage_uri']    = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/Fretadao/f_service'
+  spec.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/f_service"
   # spec.metadata['changelog_uri'] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.
