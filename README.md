@@ -60,7 +60,7 @@ end
 
 ### Using your service
 
-To run your service, use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/questions/19108550/how-does-rubys-operator-work), but you can use it in the form you like most.
+To run your service, use the method `#call` provided by `FService::Base`. We like to use the [implicit call](https://stackoverflow.com/a/19108981/8650655), but you can use it in the form you like most.
 
 ```ruby
 User::Create.(name: name)
