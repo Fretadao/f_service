@@ -68,7 +68,7 @@ User::Create.(name: name)
 User::Create.call(name: name)
 ```
 
-> We do **not** recommend manually initializing your service because it **will not** type check your result!
+> We do **not** recommend manually initializing your service because it **will not** type check your result (and you could lose nice features like [pattern matching](#pattern-matching) and [service chaining](#chaining-services))!
 
 ### Using the result
 
