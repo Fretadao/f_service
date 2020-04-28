@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['homepage_uri']    = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/Fretadao/f_service'
-  spec.metadata['documentation_uri'] = "https://www.rubydoc.info/gems/f_service"
+  spec.metadata['documentation_uri'] = 'https://www.rubydoc.info/gems/f_service'
   # spec.metadata['changelog_uri'] = "TODO: Put your gem's CHANGELOG.md URL here."
 
   # Specify which files should be added to the gem when it is released.

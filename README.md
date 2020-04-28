@@ -91,6 +91,41 @@ end
 ```
 > Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects) afterall, so you can use in controllers, models, etc (even other services!).
 
+### Pattern matching
+The code above could be rewritten using the `#on` matcher too. It works similar to pattern matching:
+
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create.(user_params).on(
+      success: ->(value) { return json_success(value) },
+      failure: ->(error) { return json_error(error) }
+    )
+  end
+end
+```
+> You can use any object that responds to #call, not only Lambdas.
+
+### Chaining services
+Since all services return Results, you can chain service calls making a data pipeline.
+If some step fails, it will short circuit the call chain.
+
+```ruby
+class UsersController < BaseController
+  def create
+    result = User::Create.(user_params)
+                         .then { |user| User::Login.(user) }
+                         .then { |user| User::SendWelcomeEmail.(user) }
+
+    if result.successful?
+      json_success(result.value)
+    else
+      json_error(result.error)
+    end
+  end
+end
+```
+
 ## API Docs
 
 You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
