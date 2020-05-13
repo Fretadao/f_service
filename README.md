@@ -1,3 +1,5 @@
+![CI](https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg)
+
 # FService
 
 FService is a small gem that provides a base class for your services (aka operations).
