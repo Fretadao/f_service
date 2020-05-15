@@ -124,5 +124,9 @@ module FService
     def result(condition, data = nil)
       condition ? success(data) : failure(data)
     end
+
+    def self.to_proc
+      @to_proc ||= proc { |*args| call(*args) }
+    end
   end
 end
