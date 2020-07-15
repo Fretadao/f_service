@@ -10,21 +10,26 @@ module FService
   #
   # @abstract
   class Base
-    # Initializes and runs a new service.
-    #
-    # @example
-    #   User::UpdateName.(user: user, new_name: new_name)
-    #   # or
-    #   User::UpdateName.call(user: user, new_name: new_name)
-    #
-    # @note this method shouldn't be overridden in the subclasses
-    # @return [FService::Result::Success, FService::Result::Failure]
-    def self.call(*params)
-      result = new(*params).run
-      raise(FService::Error, 'Services must return a Result') unless result.is_a? Result::Base
+    # NOTE: we have to make this check since Ruby 2.7 changed the
+    # More info: https://bugs.ruby-lang.org/issues/16157
+    all_args = RUBY_VERSION < '2.7' ? '*args' : '...'
+    Base.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+      # Initializes and runs a new service.
+      #
+      # @example
+      #   User::UpdateName.(user: user, new_name: new_name)
+      #   # or
+      #   User::UpdateName.call(user: user, new_name: new_name)
+      #
+      # @note this method shouldn't be overridden in the subclasses
+      # @return [FService::Result::Success, FService::Result::Failure]
+      def self.call(#{all_args})
+        result = new(#{all_args}).run
+        raise(FService::Error, 'Services must return a Result') unless result.is_a? Result::Base
 
-      result
-    end
+        result
+      end
+    RUBY
 
     # This method is where the main work of your service must be.
     # It is called after initilizing the service and should return
