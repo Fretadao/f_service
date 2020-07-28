@@ -1,6 +1,16 @@
-![CI](https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg)
+<p align="center">
+  <img src="./logo.png" height=150>
 
-# FService
+  <h1 align="center">FService</h1>
+
+  <p align="center">
+    <i>Simpler, safer and more composable operations</i>
+    <br>
+    <br>
+    <img src="https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg">
+    <a href="https://github.com/Fretadao/f_service/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Fretadao/f_service.svg" alt="License"></a>
+  </p>
+</p>
 
 FService is a small gem that provides a base class for your services (aka operations).
 The goal is to make services simpler, safer, and more composable.
@@ -23,7 +33,9 @@ Or install it yourself as:
     $ gem install f_service
 
 ## Usage
+
 ### Creating your service
+
 To start using it, you have to create your service class inheriting from FService::Base.
 
 ```ruby
@@ -32,6 +44,7 @@ end
 ```
 
 Now, define your initializer to setup data.
+
 ```ruby
 class User::Create < FService::Base
   def initialize(name:)
@@ -58,6 +71,7 @@ class User::Create < FService::Base
   end
 end
 ```
+
 > Remember, you **have** to return an `FService::Result` at the end of your services.
 
 ### Using your service
@@ -93,9 +107,11 @@ class UsersController < BaseController
   end
 end
 ```
+
 > Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects), so you can use in controllers, models, etc. (even other services!).
 
 ### Pattern matching
+
 The code above could be rewritten using the `#on` matcher too. It works similar to pattern matching:
 
 ```ruby
@@ -108,9 +124,11 @@ class UsersController < BaseController
   end
 end
 ```
+
 > You can use any object that responds to #call, not only Lambdas.
 
 ### Chaining services
+
 Since all services return Results, you can chain service calls making a data pipeline.
 If some step fails, it will short circuit the call chain.
 
