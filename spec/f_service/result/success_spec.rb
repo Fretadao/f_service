@@ -12,30 +12,32 @@ RSpec.describe FService::Result::Success do
   it { expect(success.error).to eq(nil) }
   it { expect(success.value!).to eq('Yay!') }
 
-  context 'when matching results' do
-    subject(:success_match) do
-      described_class.new('Yay!').on(
-        success: ->(value) { return value + '!' },
-        failure: ->(_error) { raise "This wont't ever run" }
-      )
+  describe '#on' do
+    context 'when matching results' do
+      subject(:success_match) do
+        described_class.new('Yay!').on(
+          success: ->(value) { return value + '!' },
+          failure: ->(_error) { raise "This wont't ever run" }
+        )
+      end
+
+      it 'runs on the success path' do
+        expect(success_match).to eq('Yay!!')
+      end
     end
 
-    it 'runs on the success path' do
-      expect(success_match).to eq('Yay!!')
-    end
-  end
+    context 'when chaining results' do
+      subject(:chain) do
+        described_class.new('Yay!')
+                       .then { |value| described_class.new(value + ' It') }
+                       .then { |value| described_class.new(value + ' works!') }
+      end
 
-  context 'when chaining results' do
-    subject(:chain) do
-      described_class.new('Yay!')
-                     .then { |value| described_class.new(value + ' It') }
-                     .then { |value| described_class.new(value + ' works!') }
-    end
+      it { expect(chain).to be_successful }
 
-    it { expect(chain).to be_successful }
-
-    it 'chains successful results' do
-      expect(chain.value).to eq('Yay! It works!')
+      it 'chains successful results' do
+        expect(chain.value).to eq('Yay! It works!')
+      end
     end
   end
 

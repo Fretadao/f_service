@@ -12,30 +12,32 @@ RSpec.describe FService::Result::Failure do
   it { expect(failure.value).to eq(nil) }
   it { expect { failure.value! }.to raise_error FService::Result::Error }
 
-  context 'when matching results' do
-    subject(:failure_match) do
-      described_class.new('Whoops!').on(
-        success: ->(_value) { raise "This wont't ever run" },
-        failure: ->(error) { return error + '!' }
-      )
+  describe '#on' do
+    context 'when matching results' do
+      subject(:failure_match) do
+        described_class.new('Whoops!').on(
+          success: ->(_value) { raise "This wont't ever run" },
+          failure: ->(error) { return error + '!' }
+        )
+      end
+
+      it 'runs on the failure path' do
+        expect(failure_match).to eq('Whoops!!')
+      end
     end
 
-    it 'runs on the failure path' do
-      expect(failure_match).to eq('Whoops!!')
-    end
-  end
+    context 'when chaining results' do
+      subject(:chain) do
+        FService::Result::Success.new('This...')
+                                 .then { |value| described_class.new(value + ' Fails!') }
+                                 .then { |_value| raise "This won't ever run!" }
+      end
 
-  context 'when chaining results' do
-    subject(:chain) do
-      FService::Result::Success.new('This...')
-                               .then { |value| described_class.new(value + ' Fails!') }
-                               .then { |_value| raise "This won't ever run!" }
-    end
+      it { expect(chain).to be_failed }
 
-    it { expect(chain).to be_failed }
-
-    it 'shorts circuit on failures' do
-      expect(chain.error).to eq('This... Fails!')
+      it 'shorts circuit on failures' do
+        expect(chain.error).to eq('This... Fails!')
+      end
     end
   end
 
