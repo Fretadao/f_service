@@ -63,8 +63,8 @@ module FService
       #   class UsersController < BaseController
       #     def create
       #       result = User::Create.(user_params)
-      #                 .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                 .then { |user| User::Login.(user: user) }
+      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .then { |user| User::Login.(user: user) }
       #
       #       if result.successful?
       #         json_success(result.value)
@@ -74,7 +74,7 @@ module FService
       #     end
       #   end
       #
-      # @yieldparam [result] value pass {#value} to a block
+      # @yieldparam [Success] value pass {#value} to a block
       def then
         yield value
       end

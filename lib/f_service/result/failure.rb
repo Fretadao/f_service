@@ -64,8 +64,8 @@ module FService
       #   class UsersController < BaseController
       #     def create
       #       result = User::Create.(user_params) # if this fails the following calls won't run
-      #                 .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                 .then { |user| User::Login.(user: user) }
+      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .then { |user| User::Login.(user: user) }
       #
       #       if result.successful?
       #         json_success(result.value)
