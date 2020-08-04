@@ -16,7 +16,7 @@ RSpec.describe FService::Result::Failure do
     context 'when matching results' do
       subject(:failure_match) do
         described_class.new('Whoops!').on(
-          success: ->(_value) { raise "This wont't ever run" },
+          success: ->(_value) { raise "This won't ever run" },
           failure: ->(error) { return error + '!' }
         )
       end

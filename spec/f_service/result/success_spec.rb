@@ -17,7 +17,7 @@ RSpec.describe FService::Result::Success do
       subject(:success_match) do
         described_class.new('Yay!').on(
           success: ->(value) { return value + '!' },
-          failure: ->(_error) { raise "This wont't ever run" }
+          failure: ->(_error) { raise "This won't ever run" }
         )
       end
 
