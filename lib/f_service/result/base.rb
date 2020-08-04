@@ -44,6 +44,58 @@ module FService
           failure.call(error)
         end
       end
+
+      # This hook runs if the result is successful.
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def update
+      #       User::Update.(user: user)
+      #                   .on_success { |value| return json_success(value) }
+      #                   .on_failure { |error| return json_error(error) } # this won't run
+      #     end
+      #
+      #     private
+      #
+      #     def user
+      #       @user ||= User.find_by!(slug: params[:slug])
+      #     end
+      #   end
+      #
+      # @yieldparam [Success] value the success value
+      # @return [Success, Failure] the original Result object
+      # @api public
+      def on_success
+        yield(value) if successful?
+
+        self
+      end
+
+      # This hook runs if the result is failed.
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def update
+      #       User::Update.(user: user)
+      #                   .on_success { |value| return json_success(value) } # this won't run
+      #                   .on_failure { |error| return json_error(error) }
+      #     end
+      #
+      #     private
+      #
+      #     def user
+      #       @user ||= User.find_by!(slug: params[:slug])
+      #     end
+      #   end
+      #
+      # @yieldparam [Failure] failure the failure value
+      # @return [Success, Failure] the original Result object
+      # @api public
+      def on_failure
+        yield(error) if failed?
+
+        self
+      end
     end
   end
 end

@@ -112,20 +112,19 @@ end
 
 ### Pattern matching
 
-The code above could be rewritten using the `#on` matcher too. It works similar to pattern matching:
+The code above could be rewritten using the `#on_success` and `#on_failure` hooks. They work similar to pattern matching:
 
 ```ruby
 class UsersController < BaseController
   def create
-    User::Create.(user_params).on(
-      success: ->(value) { return json_success(value) },
-      failure: ->(error) { return json_error(error) }
-    )
+    User::Create.(user_params)
+                .on_success { |value| return json_success(value) }
+                .on_failure { |error| return json_error(error) }
   end
 end
 ```
 
-> You can use any object that responds to #call, not only Lambdas.
+> You can ignore any of the callbacks, if you want to.
 
 ### Chaining services
 

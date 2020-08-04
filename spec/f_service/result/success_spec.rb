@@ -41,6 +41,45 @@ RSpec.describe FService::Result::Success do
     end
   end
 
+  describe '#on_success' do
+    subject(:on_success_callback) do
+      success.on_success { |value| value << 1 }
+    end
+
+    let(:array) { [] }
+    let(:success) { described_class.new(array) }
+
+    it 'returns itself' do
+      expect(on_success_callback).to eq success
+    end
+
+    it 'evaluates the given block on success' do
+      on_success_callback
+
+      expect(array).to eq [1]
+    end
+  end
+
+  describe '#on_failure' do
+    subject(:on_failure_callback) do
+      success.on_failure { |value| value << 1 }
+             .on_failure { raise "This won't ever run" }
+    end
+
+    let(:array) { [] }
+    let(:success) { described_class.new(array) }
+
+    it 'returns itself' do
+      expect(on_failure_callback).to eq success
+    end
+
+    it 'does not evaluate the given block on failure' do
+      on_failure_callback
+
+      expect(array).to eq []
+    end
+  end
+
   describe '#to_s' do
     it { expect(success.to_s).to eq 'Success("Yay!")' }
   end

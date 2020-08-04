@@ -6,15 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Add `#on_success` and `#on_failure` hooks on Result objects
 - Link to Changelog on gemspec
+
+<!-- ### Changed -->
+
+<!-- ### Removed -->
 
 ## 0.1.1
 ### Added
 First usable version with:
-- Result based services;
-- Type check on results;
-- Pattern matching with `#call`ables;
-- Safe chaining calls with `#then`;
+- Result based services
+- Type check on results
+- Pattern matching with `#call`ables
+- Safe chaining calls with `#then`
 
 ## 0.1.0
 - **Yanked**
