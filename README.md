@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./logo.png" height=150>
+  <img src="https://raw.githubusercontent.com/Fretadao/f_service/master/logo.png" height=150>
 
   <h1 align="center">FService</h1>
 
