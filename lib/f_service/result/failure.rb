@@ -8,17 +8,21 @@ module FService
     # Represents a value of a failed operation.
     # The error field can contain any information you want.
     #
+    # @!attribute [r] error
+    #   @return [Object] the provided error for the result
+    # @!attribute [r] type
+    #   @return [Object] the provided type for the result. Defaults to nil.
     # @api public
     class Failure < Result::Base
-      # Returns the provided error
-      attr_reader :error
+      attr_reader :error, :type
 
       # Creates a failed operation.
       # You usually shouldn't call this directly. See {FService::Base#failure}.
       #
       # @param error [Object] failure value.
-      def initialize(error)
+      def initialize(error, type = nil)
         @error = error
+        @type = type
         freeze
       end
 

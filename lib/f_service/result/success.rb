@@ -7,17 +7,21 @@ module FService
     # Represents a value of a successful operation.
     # The value field can contain any information you want.
     #
+    # @!attribute [r] value
+    #   @return [Object] the provided value for the result
+    # @!attribute [r] type
+    #   @return [Object] the provided type for the result. Defaults to nil.
     # @api public
     class Success < Result::Base
-      # Returns the provided value.
-      attr_reader :value
+      attr_reader :value, :type
 
       # Creates a successful operation.
       # You usually shouldn't call this directly. See {FService::Base#success}.
       #
       # @param value [Object] success value.
-      def initialize(value)
+      def initialize(value, type = nil)
         @value = value
+        @type = type
         freeze
       end
 

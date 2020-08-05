@@ -9,8 +9,15 @@ RSpec.describe FService::Result::Success do
   it { expect(success).to be_successful }
   it { expect(success).not_to be_failed }
   it { expect(success.value).to eq('Yay!') }
+  it { expect(success.type).to eq(nil) }
   it { expect(success.error).to eq(nil) }
   it { expect(success.value!).to eq('Yay!') }
+
+  context 'when defining a type' do
+    subject(:success) { described_class.new('Yay!', :ok) }
+
+    it { expect(success.type).to eq(:ok) }
+  end
 
   describe '#on' do
     context 'when matching results' do
