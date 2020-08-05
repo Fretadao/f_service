@@ -36,8 +36,13 @@ module FService
       #
       # @param success [#call] a lambda (or anything that responds to #call) to run on success
       # @param failure [#call] a lambda (or anything that responds to #call) to run on failure
+      # @deprecated Use {#on_success} and/or {#on_failure} instead.
       # @api public
       def on(success:, failure:)
+        warn "[DEPRECATED] #{self.class}##{__method__} is deprecated;" \
+             'use #on_success and/or #on_failure instead. ' \
+             'It will be removed on the next release.'
+
         if successful?
           success.call(value)
         else
