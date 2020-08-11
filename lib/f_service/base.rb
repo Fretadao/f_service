@@ -45,12 +45,12 @@ module FService
     #     end
     #
     #     def run
-    #       return failure('Missing user') if user.nil?
+    #       return Failure(:missing_user) if user.nil?
     #
     #       if @user.update(name: @new_name)
-    #         success(status: 'User successfully updated!', data: user)
+    #         Success(:created, data: user)
     #       else
-    #         failure(status: 'User could not be updated.', data: user.errors)
+    #         Failure(:creation_failed, data: user.errors)
     #       end
     #     end
     #   end

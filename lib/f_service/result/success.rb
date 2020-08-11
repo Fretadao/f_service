@@ -16,7 +16,7 @@ module FService
       attr_reader :value, :type
 
       # Creates a successful operation.
-      # You usually shouldn't call this directly. See {FService::Base#success}.
+      # You usually shouldn't call this directly. See {FService::Base#Success}.
       #
       # @param value [Object] success value.
       def initialize(value, type = nil)

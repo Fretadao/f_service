@@ -54,19 +54,20 @@ end
 ```
 
 The next step is writing the `#run` method, which is where the work should be done.
-Use the methods `#success` and `#failure` to handle your return values. The return can be any value.
+Use the methods `#Success` and `#Failure` to handle your return values.
+You can optionally specify a type and a value for your result.
 
 ```ruby
 class User::Create < FService::Base
   # ...
   def run
-    return failure("No name given") if @name.nil?
+    return Failure(:no_name) if @name.nil?
 
     user = UserRepository.create(name: @name)
     if user.valid?
-      success(status: "User successfully created!", data: user)
+      Success(:created, data: user)
     else
-      failure(status: "User could not be created!", data: user.errors)
+      Failure(:creation_failed, data: user.errors)
     end
   end
 end

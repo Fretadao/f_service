@@ -17,7 +17,7 @@ module FService
       attr_reader :error, :type
 
       # Creates a failed operation.
-      # You usually shouldn't call this directly. See {FService::Base#failure}.
+      # You usually shouldn't call this directly. See {FService::Base#Failure}.
       #
       # @param error [Object] failure value.
       def initialize(error, type = nil)
