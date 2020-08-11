@@ -10,9 +10,11 @@ module FService
   #
   # @abstract
   class Base
-    # NOTE: we have to make this check since Ruby 2.7 changed the
+    # NOTE: We have to make this check since Ruby 2.7 changed
+    #       how positional and keywords arguments are treated
     # More info: https://bugs.ruby-lang.org/issues/16157
     all_args = RUBY_VERSION < '2.7' ? '*args' : '...'
+
     Base.class_eval <<~RUBY, __FILE__, __LINE__ + 1
       # Initializes and runs a new service.
       #
