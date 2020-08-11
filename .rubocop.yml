@@ -13,3 +13,7 @@ Metrics/BlockLength:
 
 Style/DocumentationMethod:
   Enabled: true
+
+Naming/MethodName:
+  Exclude:
+    - lib/f_service/base.rb
