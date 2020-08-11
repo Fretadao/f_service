@@ -24,7 +24,7 @@ module FService
       #   User::UpdateName.call(user: user, new_name: new_name)
       #
       # @note this method shouldn't be overridden in the subclasses
-      # @return [FService::Result::Success, FService::Result::Failure]
+      # @return [Result::Success, Result::Failure]
       def self.call(#{all_args})
         result = new(#{all_args}).run
         raise(FService::Error, 'Services must return a Result') unless result.is_a? Result::Base
@@ -56,7 +56,7 @@ module FService
     #   end
     #
     # @note this method SHOULD be overridden in the subclasses
-    # @return [FService::Result::Success, FService::Result::Failure]
+    # @return [Result::Success, Result::Failure]
     def run
       raise NotImplementedError, 'Services must implement #run'
     end
@@ -81,7 +81,7 @@ module FService
     #
     # @return [Result::Success] a successful operation
     def success(data = nil)
-      FService::Result::Success.new(data)
+      Result::Success.new(data)
     end
 
     # Returns a successful result.
@@ -150,12 +150,12 @@ module FService
     #     end
     #   end
     #
-    # @return [FService::Result::Failure] - a failed operation
+    # @return [Result::Failure] a failed operation
     def failure(data = nil)
-      FService::Result::Failure.new(data)
+      Result::Failure.new(data)
     end
 
-    # Return either {FService::Result::Failure Success} or {FService::Result::Failure Failure}
+    # Return either {Result::Failure Success} or {Result::Failure Failure}
     # given the condition.
     #
     # @example
@@ -177,7 +177,7 @@ module FService
     #     end
     #   end
     #
-    # @return [FService::Result::Success, FService::Result::Failure]
+    # @return [Result::Success, Result::Failure]
     def result(condition, data = nil)
       condition ? success(data) : failure(data)
     end
