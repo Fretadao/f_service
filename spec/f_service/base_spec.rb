@@ -9,9 +9,23 @@ RSpec.describe FService::Base do
     it { expect(response.value).to eq('yay!') }
   end
 
+  describe '#Success' do
+    subject(:response) { described_class.new.Success(:ok, data: 'yay!') }
+
+    it { expect(response.type).to eq(:ok) }
+    it { expect(response.value).to eq('yay!') }
+  end
+
   describe '#failure' do
     subject(:response) { described_class.new.failure('Whoops!') }
 
+    it { expect(response.error).to eq('Whoops!') }
+  end
+
+  describe '#Failure' do
+    subject(:response) { described_class.new.Failure(:error, data: 'Whoops!') }
+
+    it { expect(response.type).to eq(:error) }
     it { expect(response.error).to eq('Whoops!') }
   end
 

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased (master)
 ### Added
+- Add methods `#Success(type, data:)` and `#Failure(type, data:)` on `FService::Base`.
+  These methods allow defining the type and value of the Result object.
 - Allow adding types on `Result`s.
 - Add `#on_success` and `#on_failure` hooks on Result objects.
 - Link to Changelog on gemspec.

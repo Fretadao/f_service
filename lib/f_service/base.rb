@@ -79,9 +79,59 @@ module FService
     #     end
     #   end
     #
-    # @return [FService::Result::Success] - a successful operation
+    # @return [Result::Success] a successful operation
     def success(data = nil)
       FService::Result::Success.new(data)
+    end
+
+    # Returns a successful result.
+    # You can optionally specify a type and a value for your result.
+    # You'll probably want to return this inside {#run}.
+    #
+    #
+    # @example
+    #   def run
+    #     Success
+    #     # => #<Success @value=nil, @type=nil>
+    #
+    #     Success(:ok)
+    #     # => #<Success @value=nil, @type=:ok>
+    #
+    #     Success(data: 10)
+    #     # => #<Success @value=10, @type=nil>
+    #
+    #     Success(:ok, data: 10)
+    #     # => #<Success @value=10, @type=:ok>
+    #   end
+    #
+    # @return [Result::Success] a successful result
+    def Success(type = nil, data: nil)
+      Result::Success.new(data, type)
+    end
+
+    # Returns a failed result.
+    # You can optionally specify a type and a value for your result.
+    # You'll probably want to return this inside {#run}.
+    #
+    #
+    # @example
+    #   def run
+    #     Failure
+    #     # => #<Failure @error=nil, @type=nil>
+    #
+    #     Failure(:not_a_number)
+    #     # => #<Failure @error=nil, @type=:not_a_number>
+    #
+    #     Failure(data: "10")
+    #     # => #<Failure @error="10", @type=nil>
+    #
+    #     Failure(:not_a_number, data: "10")
+    #     # => #<Failure @error="10", @type=:not_a_number>
+    #   end
+    #
+    # @return [Result::Failure] a failed result
+    def Failure(type = nil, data: nil)
+      Result::Failure.new(data, type)
     end
 
     # Returns a failed operation.
