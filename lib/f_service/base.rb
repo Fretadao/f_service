@@ -79,8 +79,14 @@ module FService
     #     end
     #   end
     #
+    # @deprecated Use {#Success} instead.
     # @return [Result::Success] a successful operation
     def success(data = nil)
+      FService.deprecate!(
+        name: "#{self.class}##{__method__}",
+        alternative: '#Success'
+      )
+
       Result::Success.new(data)
     end
 
@@ -150,8 +156,14 @@ module FService
     #     end
     #   end
     #
+    # @deprecated Use {#Failure} instead.
     # @return [Result::Failure] a failed operation
     def failure(data = nil)
+      FService.deprecate!(
+        name: "#{self.class}##{__method__}",
+        alternative: '#Failure'
+      )
+
       Result::Failure.new(data)
     end
 

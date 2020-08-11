@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Link to Changelog on gemspec.
 
 ### Changed
+- **[Deprecation]** Mark `Base#success` and `Base#failure` as deprecated. They will be removed on the next release. Use the `Base#Success` and `Base#Failure` instead.
 - **[Deprecation]** Mark `Result#on` as deprecated. It will be removed on the next release. Use the`Result#on_success` and/or `Result#on_failure` hooks instead.
 
 <!-- ### Removed -->
