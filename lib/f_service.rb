@@ -6,7 +6,9 @@ require_relative 'f_service/base'
 #
 # @api public
 module FService
-  # Mark a method as deprecated
+  # Marks a method as deprecated
+  #
+  # @api private
   def self.deprecate!(name:, alternative:)
     warn "[DEPRECATED] #{name} is deprecated; " \
          "use #{alternative} instead. " \

@@ -39,9 +39,10 @@ module FService
       # @deprecated Use {#on_success} and/or {#on_failure} instead.
       # @api public
       def on(success:, failure:)
-        warn "[DEPRECATED] #{self.class}##{__method__} is deprecated;" \
-             'use #on_success and/or #on_failure instead. ' \
-             'It will be removed on the next release.'
+        FService.deprecate!(
+          name: "#{self.class}##{__method__}",
+          alternative: '#on_success and/or #on_failure'
+        )
 
         if successful?
           success.call(value)
