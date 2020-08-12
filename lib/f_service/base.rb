@@ -168,6 +168,40 @@ module FService
       res ? Success(type, data: res) : Failure(type, data: res)
     end
 
+    # If the given block raises an exception, it wraps it in a Failure.
+    # Otherwise, maps the block value in a Success object.
+    # You can specify which exceptions to watch for.
+    # It's possible to provide a type for the result too.
+    #
+    # @example
+    #   class IHateEvenNumbers < FService::Base
+    #     def run
+    #       Try(:rand_int) do
+    #         n = rand(1..10)
+    #         raise "Yuck! It's a #{n}" if n.even?
+    #
+    #         n
+    #       end
+    #     end
+    #   end
+    #
+    #   IHateEvenNumbers.call
+    #   # => #<Success @value=9, @type=:rand_int>
+    #
+    #   IHateEvenNumbers.call
+    #   # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+    #
+    # @param type the Result type
+    # @param catch the exception list to catch
+    # @return [Result::Success, Result::Failure] a result from the boolean expression
+    def Try(type = nil, catch: StandardError)
+      res = yield
+
+      Success(type, data: res)
+    rescue *catch => e
+      Failure(type, data: e)
+    end
+
     # Returns a failed operation.
     # You'll probably want to return this inside {#run}.
     # @example

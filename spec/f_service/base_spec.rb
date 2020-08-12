@@ -53,6 +53,36 @@ RSpec.describe FService::Base do
     end
   end
 
+  describe '#Try' do
+    subject(:response) { described_class.new.Try(:division) { 0 / 1 } }
+
+    it { expect(response).to be_successful }
+    it { expect(response.type).to eq(:division) }
+    it { expect(response.value!).to eq(0) }
+
+    context 'when some exception is raised' do
+      subject(:response) { described_class.new.Try(:division) { 1 / 0 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(:division) }
+      it { expect(response.error).to be_a ZeroDivisionError }
+    end
+
+    context 'when type is not specified' do
+      subject(:response) { described_class.new.Try { 0 / 1 } }
+
+      it { expect(response).to be_successful }
+      it { expect(response.type).to eq(nil) }
+      it { expect(response.value!).to eq 0 }
+    end
+
+    context 'when raised exception does not match specified exception' do
+      subject(:response) { described_class.new.Try(catch: ZeroDivisionError) { 1 / '0' } }
+
+      it { expect { response }.to raise_error TypeError }
+    end
+  end
+
   describe '#result' do
     subject(:response) { described_class.new.result(condition) }
 
