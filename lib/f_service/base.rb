@@ -217,8 +217,14 @@ module FService
     #     end
     #   end
     #
+    # @deprecated Use {#Check} instead.
     # @return [Result::Success, Result::Failure]
     def result(condition, data = nil)
+      FService.deprecate!(
+        name: "#{self.class}##{__method__}",
+        alternative: '#Check'
+      )
+
       condition ? success(data) : failure(data)
     end
   end
