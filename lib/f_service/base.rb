@@ -144,6 +144,30 @@ module FService
       Result::Failure.new(data, type)
     end
 
+    # Converts a boolean to a Result.
+    # Truthy values map to Success, and falsey values map to Failures.
+    # You can optionally provide a type for the result. The result value
+    # is the evaluated value of the given block.
+    #
+    # @example
+    #   class CheckMathWorks < FService::Base
+    #     def run
+    #       Check(:math_works) { 1 < 2 }
+    #       # => #<Success @value=true, @type=:math_works>
+    #
+    #       Check(:math_works) { 1 > 2 }
+    #       # => #<Failure @error=false, @type=:math_works>
+    #     end
+    #   end
+    #
+    # @param type the result type
+    # @return [Result::Success, Result::Failure] a result from the boolean expression
+    def Check(type = nil)
+      res = yield
+
+      res ? Success(type, data: res) : Failure(type, data: res)
+    end
+
     # Returns a failed operation.
     # You'll probably want to return this inside {#run}.
     # @example

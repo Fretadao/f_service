@@ -29,6 +29,30 @@ RSpec.describe FService::Base do
     it { expect(response.error).to eq('Whoops!') }
   end
 
+  describe '#Check' do
+    subject(:response) { described_class.new.Check(:math_works) { 1 < 2 } }
+
+    it { expect(response).to be_successful }
+    it { expect(response.type).to eq(:math_works) }
+    it { expect(response.value!).to eq(true) }
+
+    context 'when block evaluates to false' do
+      subject(:response) { described_class.new.Check(:math_works) { 1 > 2 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(:math_works) }
+      it { expect(response.error).to eq(false) }
+    end
+
+    context 'when type is not specified' do
+      subject(:response) { described_class.new.Check { 1 > 2 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(nil) }
+      it { expect(response.error).to eq(false) }
+    end
+  end
+
   describe '#result' do
     subject(:response) { described_class.new.result(condition) }
 
