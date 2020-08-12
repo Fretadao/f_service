@@ -97,7 +97,7 @@ module FService
     #
     # @example
     #   def run
-    #     Success
+    #     Success()
     #     # => #<Success @value=nil, @type=nil>
     #
     #     Success(:ok)
@@ -122,7 +122,7 @@ module FService
     #
     # @example
     #   def run
-    #     Failure
+    #     Failure()
     #     # => #<Failure @error=nil, @type=nil>
     #
     #     Failure(:not_a_number)
