@@ -110,6 +110,8 @@ module FService
     #     # => #<Success @value=10, @type=:ok>
     #   end
     #
+    # @param type the result type
+    # @param data the result value
     # @return [Result::Success] a successful result
     def Success(type = nil, data: nil)
       Result::Success.new(data, type)
@@ -135,6 +137,8 @@ module FService
     #     # => #<Failure @error="10", @type=:not_a_number>
     #   end
     #
+    # @param type the result type
+    # @param data the result value
     # @return [Result::Failure] a failed result
     def Failure(type = nil, data: nil)
       Result::Failure.new(data, type)
