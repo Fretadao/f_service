@@ -110,7 +110,7 @@ module FService
     #     # => #<Success @value=10, @type=:ok>
     #   end
     #
-    # @param type the result type
+    # @param type the Result type
     # @param data the result value
     # @return [Result::Success] a successful result
     def Success(type = nil, data: nil)
@@ -137,7 +137,7 @@ module FService
     #     # => #<Failure @error="10", @type=:not_a_number>
     #   end
     #
-    # @param type the result type
+    # @param type the Result type
     # @param data the result value
     # @return [Result::Failure] a failed result
     def Failure(type = nil, data: nil)
@@ -160,8 +160,8 @@ module FService
     #     end
     #   end
     #
-    # @param type the result type
-    # @return [Result::Success, Result::Failure] a result from the boolean expression
+    # @param type the Result type
+    # @return [Result::Success, Result::Failure] a Result from the boolean expression
     def Check(type = nil)
       res = yield
 
