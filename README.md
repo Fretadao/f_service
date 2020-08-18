@@ -7,6 +7,7 @@
     <i>Simpler, safer and more composable operations</i>
     <br>
     <br>
+    <img src="https://img.shields.io/gem/v/f_service">
     <img src="https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg">
     <a href="https://github.com/Fretadao/f_service/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Fretadao/f_service.svg" alt="License"></a>
   </p>
