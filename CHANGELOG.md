@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased (master)
 ### Added
+- Add type check on `Result#on_success` and `Result#on_failure` hooks.
 - Add method `Base#Try`. It wraps exceptions in Failures.
 - Add method `Base#Check`. It converts booleans to Results.
 - Add methods `#Success(type, data:)` and `#Failure(type, data:)` on `FService::Base`.

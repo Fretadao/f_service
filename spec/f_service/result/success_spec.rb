@@ -51,10 +51,12 @@ RSpec.describe FService::Result::Success do
   describe '#on_success' do
     subject(:on_success_callback) do
       success.on_success { |value| value << 1 }
+             .on_success(:ok) { |value| value << 2 }
+             .on_success(:still_ok) { |value| value << 3 }
     end
 
     let(:array) { [] }
-    let(:success) { described_class.new(array) }
+    let(:success) { described_class.new(array, :ok) }
 
     it 'returns itself' do
       expect(on_success_callback).to eq success
@@ -63,18 +65,19 @@ RSpec.describe FService::Result::Success do
     it 'evaluates the given block on success' do
       on_success_callback
 
-      expect(array).to eq [1]
+      expect(array).to eq [1, 2]
     end
   end
 
   describe '#on_failure' do
     subject(:on_failure_callback) do
       success.on_failure { |value| value << 1 }
+             .on_failure(:ok) { |value| value << 2 }
              .on_failure { raise "This won't ever run" }
     end
 
     let(:array) { [] }
-    let(:success) { described_class.new(array) }
+    let(:success) { described_class.new(array, :ok) }
 
     it 'returns itself' do
       expect(on_failure_callback).to eq success
