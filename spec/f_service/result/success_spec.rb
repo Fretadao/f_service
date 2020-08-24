@@ -37,13 +37,14 @@ RSpec.describe FService::Result::Success do
       subject(:chain) do
         described_class.new('Yay!')
                        .then { |value| described_class.new(value + ' It') }
-                       .then { |value| described_class.new(value + ' works!') }
+                       .then { |value| described_class.new(value + ' works!', :ok) }
+                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
       end
 
       it { expect(chain).to be_successful }
 
       it 'chains successful results' do
-        expect(chain.value).to eq('Yay! It works!')
+        expect(chain.value).to eq('Yay! It works! Type: ok!')
       end
     end
   end
@@ -51,7 +52,7 @@ RSpec.describe FService::Result::Success do
   describe '#on_success' do
     subject(:on_success_callback) do
       success.on_success { |value| value << 1 }
-             .on_success(:ok) { |value| value << 2 }
+             .on_success(:ok) { |value, type| value << type }
              .on_success(:still_ok) { |value| value << 3 }
     end
 
@@ -65,7 +66,7 @@ RSpec.describe FService::Result::Success do
     it 'evaluates the given block on success' do
       on_success_callback
 
-      expect(array).to eq [1, 2]
+      expect(array).to eq [1, :ok]
     end
   end
 

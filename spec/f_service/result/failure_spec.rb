@@ -51,7 +51,7 @@ RSpec.describe FService::Result::Failure do
   describe '#on_failure' do
     subject(:on_failure_callback) do
       failure.on_failure { |value| value << 1 }
-             .on_failure(:error) { |value| value << 2 }
+             .on_failure(:error) { |value, type| value << type }
              .on_failure(:other_error) { |value| value << 3 }
     end
 
@@ -65,7 +65,7 @@ RSpec.describe FService::Result::Failure do
     it 'evaluates the given block on failure' do
       on_failure_callback
 
-      expect(array).to eq [1, 2]
+      expect(array).to eq [1, :error]
     end
   end
 

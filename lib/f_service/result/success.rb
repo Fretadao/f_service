@@ -78,9 +78,10 @@ module FService
       #     end
       #   end
       #
-      # @yieldparam [Success] value pass {#value} to a block
+      # @yieldparam value pass {#value} to a block
+      # @yieldparam type pass {#type} to a block
       def then
-        yield value
+        yield(*to_ary)
       end
 
       # Outputs a string representation of the object

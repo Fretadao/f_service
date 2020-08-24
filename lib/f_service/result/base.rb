@@ -68,11 +68,12 @@ module FService
       #     end
       #   end
       #
-      # @yieldparam [Success] value the success value
+      # @yieldparam value value of the failure object
+      # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
       def on_success(target_type = nil)
-        yield(value) if successful? && expected_type?(target_type)
+        yield(*to_ary) if successful? && expected_type?(target_type)
 
         self
       end
@@ -94,18 +95,27 @@ module FService
       #     end
       #   end
       #
-      # @yieldparam [Failure] failure the failure value
+      # @yieldparam value value of the failure object
+      # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
       def on_failure(target_type = nil)
-        yield(error) if failed? && expected_type?(target_type)
+        yield(*to_ary) if failed? && expected_type?(target_type)
 
         self
       end
 
+      # Splits the result object into its components.
+      #
+      # @return [Array] value and type of the result object
+      def to_ary
+        data = successful? ? value : error
+
+        [data, type]
+      end
+
       private
 
-      # @api private
       def expected_type?(target_type)
         type == target_type || target_type.nil?
       end
