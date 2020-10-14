@@ -84,6 +84,30 @@ module FService
         yield(*to_ary)
       end
 
+      # Returns itself to the given block.
+      # Use this to chain multiple service calls (since all services return Results).
+      # It will short circuit your service call chain if only consists of catches.
+      #
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def create
+      #       result = User::Create.(user_params) # if this success the following call won't run
+      #                            .catch { |error| Logger::Notify.(error: user) }
+      #
+      #       if result.successful?
+      #         json_success(result.value)
+      #       else
+      #         json_error(result.error)
+      #       end
+      #     end
+      #   end
+      #
+      # @return [self]
+      def catch
+        self
+      end
+
       # Outputs a string representation of the object
       #
       #

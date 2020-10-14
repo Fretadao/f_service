@@ -46,6 +46,21 @@ RSpec.describe FService::Result::Failure do
         expect(chain.error).to eq('This... Fails!')
       end
     end
+
+    context 'when chaining results with a catch block' do
+      subject(:chain) do
+        FService::Result::Success.new('This...')
+                                 .then { |value| described_class.new(value + ' Fails!') }
+                                 .catch { |error| described_class.new(error + ' Again!') }
+                                 .then { |_value| raise "This won't ever run!" }
+      end
+
+      it { expect(chain).to be_failed }
+
+      it 'executes the catch block ' do
+        expect(chain.error).to eq('This... Fails! Again!')
+      end
+    end
   end
 
   describe '#on_failure' do

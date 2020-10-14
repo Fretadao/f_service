@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased (master)
 ### Added
+- Add `catch` to `Failure` and `Success`. It acts as an inverted `then`.
 - Yields result type on blocks (`then`, `on_success` and `on_failure`)
 - Add type check on `Result#on_success` and `Result#on_failure` hooks.
 - Add method `Base#Try`. It wraps exceptions in Failures.
