@@ -53,6 +53,9 @@ RSpec.describe FService::Result::Failure do
       failure.on_failure { |value| value << 1 }
              .on_failure(:error) { |value, type| value << type }
              .on_failure(:other_error) { |value| value << 3 }
+             .on_failure(:error, :other_error, :another_error) do |value|
+               value << "That's no moon"
+             end
     end
 
     let(:array) { [] }
@@ -65,7 +68,7 @@ RSpec.describe FService::Result::Failure do
     it 'evaluates the given block on failure' do
       on_failure_callback
 
-      expect(array).to eq [1, :error]
+      expect(array).to eq [1, :error, "That's no moon"]
     end
   end
 
@@ -74,6 +77,7 @@ RSpec.describe FService::Result::Failure do
       failure.on_success { |value| value << 1 }
              .on_success(:error) { |value| value << 2 }
              .on_success { raise "This won't ever run" }
+             .on_success(:error, :other_error) { raise 'Chewbacca is a Wookie warrior' }
     end
 
     let(:array) { [] }
