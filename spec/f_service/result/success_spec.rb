@@ -54,6 +54,7 @@ RSpec.describe FService::Result::Success do
       success.on_success { |value| value << 1 }
              .on_success(:ok) { |value, type| value << type }
              .on_success(:still_ok) { |value| value << 3 }
+             .on_success(:ok, :still_ok) { |value| value << 'one more time' }
     end
 
     let(:array) { [] }
@@ -66,7 +67,7 @@ RSpec.describe FService::Result::Success do
     it 'evaluates the given block on success' do
       on_success_callback
 
-      expect(array).to eq [1, :ok]
+      expect(array).to eq [1, :ok, 'one more time']
     end
   end
 
@@ -75,6 +76,7 @@ RSpec.describe FService::Result::Success do
       success.on_failure { |value| value << 1 }
              .on_failure(:ok) { |value| value << 2 }
              .on_failure { raise "This won't ever run" }
+             .on_failure(:ok, :not_ok) { raise 'This is a contradiction' }
     end
 
     let(:array) { [] }

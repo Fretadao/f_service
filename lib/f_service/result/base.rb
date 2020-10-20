@@ -52,11 +52,13 @@ module FService
       end
 
       # This hook runs if the result is successful.
+      # Can receive one or more types to be checked before running the given block.
       #
       # @example
       #   class UsersController < BaseController
       #     def update
       #       User::Update.(user: user)
+      #                   .on_success(:type, :type2) { return json_success({ status: :ok }) } # run only if type matches
       #                   .on_success { |value| return json_success(value) }
       #                   .on_failure { |error| return json_error(error) } # this won't run
       #     end
@@ -72,19 +74,21 @@ module FService
       # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
-      def on_success(target_type = nil)
-        yield(*to_ary) if successful? && expected_type?(target_type)
+      def on_success(*target_types)
+        yield(*to_ary) if successful? && expected_type?(target_types)
 
         self
       end
 
       # This hook runs if the result is failed.
+      # Can receive one or more types to be checked before running the given block.
       #
       # @example
       #   class UsersController < BaseController
       #     def update
       #       User::Update.(user: user)
       #                   .on_success { |value| return json_success(value) } # this won't run
+      #                   .on_failure(:type, :type2) { |error| return json_error(error) } # runs only if type matches
       #                   .on_failure { |error| return json_error(error) }
       #     end
       #
@@ -99,8 +103,8 @@ module FService
       # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
-      def on_failure(target_type = nil)
-        yield(*to_ary) if failed? && expected_type?(target_type)
+      def on_failure(*target_types)
+        yield(*to_ary) if failed? && expected_type?(target_types)
 
         self
       end
@@ -116,8 +120,8 @@ module FService
 
       private
 
-      def expected_type?(target_type)
-        type == target_type || target_type.nil?
+      def expected_type?(target_types)
+        target_types.include?(type) || target_types.empty?
       end
     end
   end
