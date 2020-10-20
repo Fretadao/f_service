@@ -59,7 +59,7 @@ module FService
         raise Result::Error, 'Failure objects do not have value'
       end
 
-      # Returns its value to the given block.
+      # Returns the current error to the given block.
       # Use this to chain multiple service calls (since all services return Results).
       #
       #
