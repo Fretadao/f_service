@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased (master)
 ### Added
-- Adds support to multiple type checks on `Result#on_success` and `Result#on_failure` hooks.
+- Add support to multiple type checks on `Result#on_success` and `Result#on_failure` hooks.
 - Yields result type on blocks (`then`, `on_success` and `on_failure`).
 - Add type check on `Result#on_success` and `Result#on_failure` hooks.
 - Add method `Base#Try`. It wraps exceptions in Failures.
