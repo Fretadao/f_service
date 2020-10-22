@@ -85,22 +85,22 @@ module FService
       end
 
       # Returns itself to the given block.
-      # Use this to chain multiple service calls (since all services return Results).
-      # It will short circuit your service call chain if only consists of catches.
+      # Use this to chain multiple actions or service calls (only valid when they return a Result).
+      # It works just like the `.then` method, but only runs if service is a Failure.
       #
       #
       # @example
-      #   class UsersController < BaseController
-      #     def create
-      #       result = User::Create.(user_params) # if this success the following call won't run
-      #                            .catch { |error| Logger::Notify.(error: user) }
+      #   class UpdateUserOnExternalService
+      #     attribute :user_params
       #
-      #       if result.successful?
-      #         json_success(result.value)
-      #       else
-      #         json_error(result.error)
-      #       end
+      #     def run
+      #       check_api_status
+      #         .then { update_user }
+      #         .catch { create_update_worker }
       #     end
+      #
+      #     private
+      #     # some code
       #   end
       #
       # @return [self]

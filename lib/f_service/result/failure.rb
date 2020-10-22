@@ -61,32 +61,7 @@ module FService
 
       # Returns the current error to the given block.
       # Use this to chain multiple service calls (since all services return Results).
-      #
-      #
-      # @example
-      #   class UsersController < BaseController
-      #     def create
-      #       result = User::Create.(user_params)
-      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                            .catch { |error| Logger::Notificate.(error: error) }
-      #
-      #       if result.successful?
-      #         json_success(result.value)
-      #       else
-      #         json_error(result.error)
-      #       end
-      #     end
-      #   end
-      #
-      # @yieldparam error pass {#error} to a block
-      # @yieldparam type pass {#type} to a block
-      def catch
-        yield(*to_ary)
-      end
-
-      # Returns itself to the given block.
-      # Use this to chain multiple service calls (since all services return Results).
-      # It will short circuit your service call chain.
+      # It works just like the `.then` method, but only runs if service is a Failure.
       #
       #
       # @example
@@ -101,6 +76,32 @@ module FService
       #
       #     private
       #     # some code
+      #   end
+      #
+      # @yieldparam error pass {#error} to a block
+      # @yieldparam type pass {#type} to a block
+      def catch
+        yield(*to_ary)
+      end
+
+      # Returns itself to the given block.
+      # Use this to chain multiple service calls (since all services return Results).
+      # It will short circuit your service call chain.
+      #
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def create
+      #       result = User::Create.(user_params) # if this fails the following calls won't run
+      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .then { |user| User::Login.(user: user) }
+      #
+      #       if result.successful?
+      #         json_success(result.value)
+      #       else
+      #         json_error(result.error)
+      #       end
+      #     end
       #   end
       #
       # @return [self]
