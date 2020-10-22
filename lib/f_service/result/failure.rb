@@ -90,18 +90,17 @@ module FService
       #
       #
       # @example
-      #   class UsersController < BaseController
-      #     def create
-      #       result = User::Create.(user_params) # if this fails the following calls won't run
-      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                            .then { |user| User::Login.(user: user) }
+      #   class UpdateUserOnExternalService
+      #     attribute :user_params
       #
-      #       if result.successful?
-      #         json_success(result.value)
-      #       else
-      #         json_error(result.error)
-      #       end
+      #     def run
+      #       check_api_status
+      #         .then { update_user }
+      #         .catch { create_update_worker }
       #     end
+      #
+      #     private
+      #     # some code
       #   end
       #
       # @return [self]
