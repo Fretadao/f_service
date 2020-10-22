@@ -1,6 +1,17 @@
-![CI](https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Fretadao/f_service/master/logo.png" height=150>
 
-# FService
+  <h1 align="center">FService</h1>
+
+  <p align="center">
+    <i>Simpler, safer and more composable operations</i>
+    <br>
+    <br>
+    <img src="https://img.shields.io/gem/v/f_service">
+    <img src="https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg">
+    <a href="https://github.com/Fretadao/f_service/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Fretadao/f_service.svg" alt="License"></a>
+  </p>
+</p>
 
 FService is a small gem that provides a base class for your services (aka operations).
 The goal is to make services simpler, safer, and more composable.
@@ -23,7 +34,9 @@ Or install it yourself as:
     $ gem install f_service
 
 ## Usage
+
 ### Creating your service
+
 To start using it, you have to create your service class inheriting from FService::Base.
 
 ```ruby
@@ -32,6 +45,7 @@ end
 ```
 
 Now, define your initializer to setup data.
+
 ```ruby
 class User::Create < FService::Base
   def initialize(name:)
@@ -41,23 +55,25 @@ end
 ```
 
 The next step is writing the `#run` method, which is where the work should be done.
-Use the methods `#success` and `#failure` to handle your return values. The return can be any value.
+Use the methods `#Success` and `#Failure` to handle your return values.
+You can optionally specify a type and a value for your result.
 
 ```ruby
 class User::Create < FService::Base
   # ...
   def run
-    return failure("No name given") if @name.nil?
+    return Failure(:no_name) if @name.nil?
 
     user = UserRepository.create(name: @name)
     if user.valid?
-      success(status: "User successfully created!", data: user)
+      Success(:created, data: user)
     else
-      failure(status: "User could not be created!", data: user.errors)
+      Failure(:creation_failed, data: user.errors)
     end
   end
 end
 ```
+
 > Remember, you **have** to return an `FService::Result` at the end of your services.
 
 ### Using your service
@@ -70,7 +86,9 @@ User::Create.(name: name)
 User::Create.call(name: name)
 ```
 
-> We do **not** recommend manually initializing your service because it **will not** type check your result (and you could lose nice features like [pattern matching](#pattern-matching) and [service chaining](#chaining-services))!
+> We do **not** recommend manually initializing and running your service because it **will not**
+> type check your result (and you could lose nice features like [pattern
+> matching](#pattern-matching) and [service chaining](#chaining-services))!
 
 ### Using the result
 
@@ -91,24 +109,27 @@ class UsersController < BaseController
   end
 end
 ```
+
 > Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects), so you can use in controllers, models, etc. (even other services!).
 
 ### Pattern matching
-The code above could be rewritten using the `#on` matcher too. It works similar to pattern matching:
+
+The code above could be rewritten using the `#on_success` and `#on_failure` hooks. They work similar to pattern matching:
 
 ```ruby
 class UsersController < BaseController
   def create
-    User::Create.(user_params).on(
-      success: ->(value) { return json_success(value) },
-      failure: ->(error) { return json_error(error) }
-    )
+    User::Create.(user_params)
+                .on_success { |value| return json_success(value) }
+                .on_failure { |error| return json_error(error) }
   end
 end
 ```
-> You can use any object that responds to #call, not only Lambdas.
+
+> You can ignore any of the callbacks, if you want to.
 
 ### Chaining services
+
 Since all services return Results, you can chain service calls making a data pipeline.
 If some step fails, it will short circuit the call chain.
 

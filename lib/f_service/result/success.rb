@@ -7,17 +7,21 @@ module FService
     # Represents a value of a successful operation.
     # The value field can contain any information you want.
     #
+    # @!attribute [r] value
+    #   @return [Object] the provided value for the result
+    # @!attribute [r] type
+    #   @return [Object] the provided type for the result. Defaults to nil.
     # @api public
     class Success < Result::Base
-      # Returns the provided value.
-      attr_reader :value
+      attr_reader :value, :type
 
       # Creates a successful operation.
-      # You usually shouldn't call this directly. See {FService::Base#success}.
+      # You usually shouldn't call this directly. See {FService::Base#Success}.
       #
       # @param value [Object] success value.
-      def initialize(value)
+      def initialize(value, type = nil)
         @value = value
+        @type = type
         freeze
       end
 
@@ -63,8 +67,8 @@ module FService
       #   class UsersController < BaseController
       #     def create
       #       result = User::Create.(user_params)
-      #                 .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                 .then { |user| User::Login.(user: user) }
+      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .then { |user| User::Login.(user: user) }
       #
       #       if result.successful?
       #         json_success(result.value)
@@ -74,9 +78,10 @@ module FService
       #     end
       #   end
       #
-      # @yieldparam [result] value pass {#value} to a block
+      # @yieldparam value pass {#value} to a block
+      # @yieldparam type pass {#type} to a block
       def then
-        yield value
+        yield(*to_ary)
       end
 
       # Outputs a string representation of the object

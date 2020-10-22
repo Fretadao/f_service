@@ -9,10 +9,78 @@ RSpec.describe FService::Base do
     it { expect(response.value).to eq('yay!') }
   end
 
+  describe '#Success' do
+    subject(:response) { described_class.new.Success(:ok, data: 'yay!') }
+
+    it { expect(response.type).to eq(:ok) }
+    it { expect(response.value).to eq('yay!') }
+  end
+
   describe '#failure' do
     subject(:response) { described_class.new.failure('Whoops!') }
 
     it { expect(response.error).to eq('Whoops!') }
+  end
+
+  describe '#Failure' do
+    subject(:response) { described_class.new.Failure(:error, data: 'Whoops!') }
+
+    it { expect(response.type).to eq(:error) }
+    it { expect(response.error).to eq('Whoops!') }
+  end
+
+  describe '#Check' do
+    subject(:response) { described_class.new.Check(:math_works) { 1 < 2 } }
+
+    it { expect(response).to be_successful }
+    it { expect(response.type).to eq(:math_works) }
+    it { expect(response.value!).to eq(true) }
+
+    context 'when block evaluates to false' do
+      subject(:response) { described_class.new.Check(:math_works) { 1 > 2 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(:math_works) }
+      it { expect(response.error).to eq(false) }
+    end
+
+    context 'when type is not specified' do
+      subject(:response) { described_class.new.Check { 1 > 2 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(nil) }
+      it { expect(response.error).to eq(false) }
+    end
+  end
+
+  describe '#Try' do
+    subject(:response) { described_class.new.Try(:division) { 0 / 1 } }
+
+    it { expect(response).to be_successful }
+    it { expect(response.type).to eq(:division) }
+    it { expect(response.value!).to eq(0) }
+
+    context 'when some exception is raised' do
+      subject(:response) { described_class.new.Try(:division) { 1 / 0 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(:division) }
+      it { expect(response.error).to be_a ZeroDivisionError }
+    end
+
+    context 'when type is not specified' do
+      subject(:response) { described_class.new.Try { 0 / 1 } }
+
+      it { expect(response).to be_successful }
+      it { expect(response.type).to eq(nil) }
+      it { expect(response.value!).to eq 0 }
+    end
+
+    context 'when raised exception does not match specified exception' do
+      subject(:response) { described_class.new.Try(catch: ZeroDivisionError) { 1 / '0' } }
+
+      it { expect { response }.to raise_error TypeError }
+    end
   end
 
   describe '#result' do
