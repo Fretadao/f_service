@@ -99,6 +99,26 @@ RSpec.describe FService::Base do
     end
   end
 
+  describe '.to_proc' do
+    let(:double_number) do
+      Class.new(described_class) do
+        def initialize(number:)
+          @number = number
+        end
+
+        def run
+          Success(data: @number * 2)
+        end
+      end
+    end
+
+    it 'converts the class name to a proc' do
+      values = [{ number: 1 }, { number: 2 }, { number: 3 }].map(&double_number).map(&:value!)
+
+      expect(values).to eq([2, 4, 6])
+    end
+  end
+
   describe '.call' do
     let(:test_service) do
       Class.new(described_class) do

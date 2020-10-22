@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Fretadao/f_service/master/logo.png" height=150>
+  <img src="https://raw.githubusercontent.com/Fretadao/f_service/master/logo.png" height="150">
 
   <h1 align="center">FService</h1>
 
@@ -9,7 +9,9 @@
     <br>
     <img src="https://img.shields.io/gem/v/f_service">
     <img src="https://github.com/Fretadao/f_service/workflows/Ruby/badge.svg">
-    <a href="https://github.com/Fretadao/f_service/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Fretadao/f_service.svg" alt="License"></a>
+    <a href="https://github.com/Fretadao/f_service/blob/master/LICENSE">
+      <img src="https://img.shields.io/github/license/Fretadao/f_service.svg" alt="License">
+    </a>
   </p>
 </p>
 
@@ -148,6 +150,20 @@ class UsersController < BaseController
   end
 end
 ```
+
+You can use the `.to_proc` method on FService::Base to avoid explicit inputs when chaining services:
+
+```ruby
+class UsersController < BaseController
+  def create
+    result = User::Create.(user_params)
+                         .then(&User::Login)
+                         .then(&User::SendWelcomeEmail)
+    # ...
+  end
+end
+```
+
 
 ## API Docs
 

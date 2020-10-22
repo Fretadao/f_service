@@ -262,8 +262,24 @@ module FService
       condition ? success(data) : failure(data)
     end
 
+    # Allows running a service without explicit giving params.
+    # This is useful when chaining services or mapping inputs to be processed.
+    #
+    # @example
+    #   # Assuming all classes here subclass FService::Base:
+    #
+    #   User::Create
+    #     .then(&User::Login)
+    #     .then(&SendWelcomeEmail)
+    #
+    #   # Mapping inputs:
+    #
+    #   [{ n:1 }, { n: 2 }].map(&DoubleNumber).map(&:value)
+    #   # => [2, 4]
+    #
+    # @return [Proc]
     def self.to_proc
-      @to_proc ||= proc { |*args| call(*args) }
+      proc { |args| call(args) }
     end
   end
 end
