@@ -128,6 +128,42 @@ end
 
 > You can ignore any of the callbacks, if you want to.
 
+Going further, you can match the Result type, in case you want to handle them differently:
+
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create.(user_params)
+                .on_success(:user_created) { |value| return json_success(value) }
+                .on_success(:user_already_exists) { |value| return json_success(value) }
+                .on_failure(:invalid_data) { |error| return json_error(error) }
+                .on_failure(:critical_error) do |error|
+                  MyLogger.report_failure(error)
+
+                  return json_error(error)
+                end
+  end
+end
+```
+
+It's possible to provide multiple types to the hooks too. If the result type matches any of the given types,
+the hook will run.
+
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create.(user_params)
+                .on_success(:user_created, :user_already_exists) { |value| return json_success(value) }
+                .on_failure(:invalid_data) { |error| return json_error(error) }
+                .on_failure(:critical_error) do |error|
+                  MyLogger.report_failure(error)
+
+                  return json_error(error)
+                end
+  end
+end
+```
+
 ### Chaining services
 
 Since all services return Results, you can chain service calls making a data pipeline.
