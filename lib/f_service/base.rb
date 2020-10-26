@@ -147,8 +147,8 @@ module FService
     # Converts a boolean to a Result.
     # Truthy values map to Success, and falsey values map to Failures.
     # You can optionally provide a type for the result.
-    # The result value defaults as the evaluated value of the given block,
-    # if you want another value you can pass it through the data argument.
+    # The result value defaults as the evaluated value of the given block.
+    # If you want another value you can pass it through the `data:` argument.
     #
     # @example
     #   class CheckMathWorks < FService::Base
@@ -169,11 +169,9 @@ module FService
     def Check(type = nil, data: nil)
       res = yield
 
-      unless data.nil?
-        return res ? Success(type, data: data) : Failure(type, data: data)
-      end
+      final_data = data || res
 
-      res ? Success(type, data: res) : Failure(type, data: res)
+      res ? Success(type, data: final_data) : Failure(type, data: final_data)
     end
 
     # If the given block raises an exception, it wraps it in a Failure.
