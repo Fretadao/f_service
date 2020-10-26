@@ -160,7 +160,11 @@ module FService
     #       # => #<Failure @error=false, @type=:math_works>
     #
     #       Check(:math_works, data: 1 + 2) { 1 > 2 }
-    #       # => #<Failure @error=false, @type=:math_works, @error=3>
+    #       # => #<Failure @type=:math_works, @error=3>
+    #     end
+    #
+    #       Check(:math_works, data: 1 + 2) { 1 < 2 }
+    #       # => #<Success @type=:math_works, @value=3>
     #     end
     #   end
     #
