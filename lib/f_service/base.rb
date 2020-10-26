@@ -169,11 +169,9 @@ module FService
     def Check(type = nil, data: nil)
       res = yield
 
-      unless data.nil?
-        return res ? Success(type, data: data) : Failure(type, data: data)
-      end
+      final_data = data || res
 
-      res ? Success(type, data: res) : Failure(type, data: res)
+      res ? Success(type, data: final_data) : Failure(type, data: final_data)
     end
 
     # If the given block raises an exception, it wraps it in a Failure.
