@@ -147,8 +147,8 @@ module FService
     # Converts a boolean to a Result.
     # Truthy values map to Success, and falsey values map to Failures.
     # You can optionally provide a type for the result.
-    # The result value defaults as the evaluated value of the given block,
-    # if you want another value you can pass it through the data argument.
+    # The result value defaults as the evaluated value of the given block.
+    # If you want another value you can pass it through the `data:` argument.
     #
     # @example
     #   class CheckMathWorks < FService::Base
