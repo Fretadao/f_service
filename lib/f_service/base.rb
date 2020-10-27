@@ -146,8 +146,9 @@ module FService
 
     # Converts a boolean to a Result.
     # Truthy values map to Success, and falsey values map to Failures.
-    # You can optionally provide a type for the result. The result value
-    # is the evaluated value of the given block.
+    # You can optionally provide a type for the result.
+    # The result value defaults as the evaluated value of the given block.
+    # If you want another value you can pass it through the `data:` argument.
     #
     # @example
     #   class CheckMathWorks < FService::Base
@@ -157,15 +158,24 @@ module FService
     #
     #       Check(:math_works) { 1 > 2 }
     #       # => #<Failure @error=false, @type=:math_works>
+    #
+    #       Check(:math_works, data: 1 + 2) { 1 > 2 }
+    #       # => #<Failure @type=:math_works, @error=3>
+    #     end
+    #
+    #       Check(:math_works, data: 1 + 2) { 1 < 2 }
+    #       # => #<Success @type=:math_works, @value=3>
     #     end
     #   end
     #
     # @param type the Result type
     # @return [Result::Success, Result::Failure] a Result from the boolean expression
-    def Check(type = nil)
+    def Check(type = nil, data: nil)
       res = yield
 
-      res ? Success(type, data: res) : Failure(type, data: res)
+      final_data = data || res
+
+      res ? Success(type, data: final_data) : Failure(type, data: final_data)
     end
 
     # If the given block raises an exception, it wraps it in a Failure.
@@ -260,6 +270,26 @@ module FService
       )
 
       condition ? success(data) : failure(data)
+    end
+
+    # Allows running a service without explicit giving params.
+    # This is useful when chaining services or mapping inputs to be processed.
+    #
+    # @example
+    #   # Assuming all classes here subclass FService::Base:
+    #
+    #   User::Create
+    #     .then(&User::Login)
+    #     .then(&SendWelcomeEmail)
+    #
+    #   # Mapping inputs:
+    #
+    #   [{ n:1 }, { n: 2 }].map(&DoubleNumber).map(&:value)
+    #   # => [2, 4]
+    #
+    # @return [Proc]
+    def self.to_proc
+      proc { |args| call(args) }
     end
   end
 end

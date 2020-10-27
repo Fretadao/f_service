@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased (master)
 ### Added
 - Add `catch` to `Failure` and `Success`. It acts as an inverted `then`.
+- Add support to custom `data` property to be passed when calling `Base#Check`.
 - Add support to multiple type checks on `Result#on_success` and `Result#on_failure` hooks.
 - Yields result type on blocks (`then`, `on_success` and `on_failure`).
 - Add type check on `Result#on_success` and `Result#on_failure` hooks.

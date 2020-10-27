@@ -51,6 +51,14 @@ RSpec.describe FService::Base do
       it { expect(response.type).to eq(nil) }
       it { expect(response.error).to eq(false) }
     end
+
+    context 'when data is passed' do
+      subject(:response) { described_class.new.Check(data: 'that is an error') { 1 > 2 } }
+
+      it { expect(response).to be_failed }
+      it { expect(response.type).to eq(nil) }
+      it { expect(response.error).to eq('that is an error') }
+    end
   end
 
   describe '#Try' do
@@ -96,6 +104,26 @@ RSpec.describe FService::Base do
       let(:condition) { 1 > 2 }
 
       it { expect(response).to be_failed }
+    end
+  end
+
+  describe '.to_proc' do
+    let(:double_number) do
+      Class.new(described_class) do
+        def initialize(number:)
+          @number = number
+        end
+
+        def run
+          Success(data: @number * 2)
+        end
+      end
+    end
+
+    it 'converts the class name to a proc' do
+      values = [{ number: 1 }, { number: 2 }, { number: 3 }].map(&double_number).map(&:value!)
+
+      expect(values).to eq([2, 4, 6])
     end
   end
 
