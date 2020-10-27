@@ -61,7 +61,7 @@ module FService
 
       # Returns the current error to the given block.
       # Use this to chain multiple service calls (since all services return Results).
-      # It works just like the `.then` method, but only runs if service is a Failure.
+      # It works just like the `.then` method, but only runs if the result is a Failure.
       #
       #
       # @example
