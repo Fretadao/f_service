@@ -84,6 +84,8 @@ module FService
         yield(*to_ary)
       end
 
+      alias or catch
+
       # Returns itself to the given block.
       # Use this to chain multiple service calls (since all services return Results).
       # It will short circuit your service call chain.

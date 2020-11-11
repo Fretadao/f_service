@@ -108,6 +108,8 @@ module FService
         self
       end
 
+      alias or catch
+
       # Outputs a string representation of the object
       #
       #
