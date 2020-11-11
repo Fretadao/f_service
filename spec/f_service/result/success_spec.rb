@@ -47,6 +47,38 @@ RSpec.describe FService::Result::Success do
         expect(chain.value).to eq('Yay! It works! Type: ok!')
       end
     end
+
+    context 'when chaining results with a catch block' do
+      subject(:chain) do
+        described_class.new('Yay!')
+                       .catch { FService::Result::Failure.new('Shoot! It failed!') }
+                       .then { |value| described_class.new(value + ' It') }
+                       .then { |value| described_class.new(value + ' works!', :ok) }
+                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
+      end
+
+      it { expect(chain).to be_successful }
+
+      it 'chains successful results' do
+        expect(chain.value).to eq('Yay! It works! Type: ok!')
+      end
+    end
+
+    context 'when chaining results with a catch block using the `or` alias' do
+      subject(:chain) do
+        described_class.new('Yay!')
+                       .or { FService::Result::Failure.new('Shoot! It failed!') }
+                       .then { |value| described_class.new(value + ' It') }
+                       .then { |value| described_class.new(value + ' works!', :ok) }
+                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
+      end
+
+      it { expect(chain).to be_successful }
+
+      it 'chains successful results' do
+        expect(chain.value).to eq('Yay! It works! Type: ok!')
+      end
+    end
   end
 
   describe '#on_success' do

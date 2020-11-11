@@ -84,6 +84,32 @@ module FService
         yield(*to_ary)
       end
 
+      # Returns itself to the given block.
+      # Use this to chain multiple actions or service calls (only valid when they return a Result).
+      # It works just like the `.then` method, but only runs if service is a Failure.
+      #
+      #
+      # @example
+      #   class UpdateUserOnExternalService
+      #     attribute :user_params
+      #
+      #     def run
+      #       check_api_status
+      #         .then { update_user }
+      #         .catch { create_update_worker }
+      #     end
+      #
+      #     private
+      #     # some code
+      #   end
+      #
+      # @return [self]
+      def catch
+        self
+      end
+
+      alias or catch
+
       # Outputs a string representation of the object
       #
       #

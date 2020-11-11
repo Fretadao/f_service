@@ -59,6 +59,33 @@ module FService
         raise Result::Error, 'Failure objects do not have value'
       end
 
+      # Returns the current error to the given block.
+      # Use this to chain multiple service calls (since all services return Results).
+      # It works just like the `.then` method, but only runs if the result is a Failure.
+      #
+      #
+      # @example
+      #   class UpdateUserOnExternalService
+      #     attribute :user_params
+      #
+      #     def run
+      #       check_api_status
+      #         .then { update_user }
+      #         .catch { create_update_worker }
+      #     end
+      #
+      #     private
+      #     # some code
+      #   end
+      #
+      # @yieldparam error pass {#error} to a block
+      # @yieldparam type pass {#type} to a block
+      def catch
+        yield(*to_ary)
+      end
+
+      alias or catch
+
       # Returns itself to the given block.
       # Use this to chain multiple service calls (since all services return Results).
       # It will short circuit your service call chain.
