@@ -10,12 +10,7 @@ module FService
   #
   # @abstract
   class Base
-    # NOTE: We have to make this check since Ruby 2.7 changed
-    #       how positional and keywords arguments are treated
-    # More info: https://bugs.ruby-lang.org/issues/16157
-    all_args = RUBY_VERSION < '2.7' ? '*args' : '...'
-
-    Base.class_eval <<~RUBY, __FILE__, __LINE__ + 1
+    class << self
       # Initializes and runs a new service.
       #
       # @example
@@ -25,13 +20,35 @@ module FService
       #
       # @note this method shouldn't be overridden in the subclasses
       # @return [Result::Success, Result::Failure]
-      def self.call(#{all_args})
-        result = new(#{all_args}).run
+      def call(*args)
+        result = new(*args).run
         raise(FService::Error, 'Services must return a Result') unless result.is_a? Result::Base
 
         result
       end
-    RUBY
+
+      ruby2_keywords :call if respond_to?(:ruby2_keywords, true)
+
+      # Allows running a service without explicit giving params.
+      # This is useful when chaining services or mapping inputs to be processed.
+      #
+      # @example
+      #   # Assuming all classes here subclass FService::Base:
+      #
+      #   User::Create
+      #     .then(&User::Login)
+      #     .then(&SendWelcomeEmail)
+      #
+      #   # Mapping inputs:
+      #
+      #   [{ n:1 }, { n: 2 }].map(&DoubleNumber).map(&:value)
+      #   # => [2, 4]
+      #
+      # @return [Proc]
+      def to_proc
+        proc { |args| call(**args) }
+      end
+    end
 
     # This method is where the main work of your service must be.
     # It is called after initilizing the service and should return
@@ -270,26 +287,6 @@ module FService
       )
 
       condition ? success(data) : failure(data)
-    end
-
-    # Allows running a service without explicit giving params.
-    # This is useful when chaining services or mapping inputs to be processed.
-    #
-    # @example
-    #   # Assuming all classes here subclass FService::Base:
-    #
-    #   User::Create
-    #     .then(&User::Login)
-    #     .then(&SendWelcomeEmail)
-    #
-    #   # Mapping inputs:
-    #
-    #   [{ n:1 }, { n: 2 }].map(&DoubleNumber).map(&:value)
-    #   # => [2, 4]
-    #
-    # @return [Proc]
-    def self.to_proc
-      proc { |args| call(args) }
     end
   end
 end
