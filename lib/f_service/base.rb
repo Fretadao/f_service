@@ -27,6 +27,8 @@ module FService
         result
       end
 
+      ruby2_keywords :call if respond_to?(:ruby2_keywords, true)
+
       # Allows running a service without explicit giving params.
       # This is useful when chaining services or mapping inputs to be processed.
       #
@@ -46,8 +48,6 @@ module FService
       def to_proc
         proc { |args| call(**args) }
       end
-
-      ruby2_keywords :call if respond_to?(:ruby2_keywords, true)
     end
 
     # This method is where the main work of your service must be.
