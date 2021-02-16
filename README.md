@@ -200,6 +200,39 @@ class UsersController < BaseController
 end
 ```
 
+### `Check` and `Try`
+
+You can use `Check` to converts a boolean to a Result, truthy values map to `Success`, and falsey values map to `Failures`:
+
+```ruby
+Check(:math_works) { 1 < 2 }
+# => #<Success @value=true, @type=:math_works>
+
+Check(:math_works) { 1 > 2 }
+# => #<Failure @error=false, @type=:math_works>
+```
+
+`Try` transforms an exception into a `Failure` if some exception is raised for the given block. You can specify which exception class to watch for
+using the parameter `catch`.
+
+```ruby
+class IHateEvenNumbers < FService::Base
+  def run
+    Try(:rand_int) do
+      n = rand(1..10)
+      raise "Yuck! It's a #{n}" if n.even?
+
+      n
+    end
+  end
+end
+
+IHateEvenNumbers.call
+# => #<Success @value=9, @type=:rand_int>
+
+IHateEvenNumbers.call
+# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+```
 
 ## API Docs
 
