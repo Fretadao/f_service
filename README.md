@@ -175,8 +175,8 @@ If some step fails, it will short circuit the call chain.
 class UsersController < BaseController
   def create
     result = User::Create.(user_params)
-                         .then { |user| User::Login.(user) }
-                         .then { |user| User::SendWelcomeEmail.(user) }
+                         .and_then { |user| User::Login.(user) }
+                         .and_then { |user| User::SendWelcomeEmail.(user) }
 
     if result.successful?
       json_success(result.value)
@@ -193,8 +193,8 @@ You can use the `.to_proc` method on FService::Base to avoid explicit inputs whe
 class UsersController < BaseController
   def create
     result = User::Create.(user_params)
-                         .then(&User::Login)
-                         .then(&User::SendWelcomeEmail)
+                         .and_then(&User::Login)
+                         .and_then(&User::SendWelcomeEmail)
     # ...
   end
 end

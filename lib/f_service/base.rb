@@ -36,8 +36,8 @@ module FService
       #   # Assuming all classes here subclass FService::Base:
       #
       #   User::Create
-      #     .then(&User::Login)
-      #     .then(&SendWelcomeEmail)
+      #     .and_then(&User::Login)
+      #     .and_then(&SendWelcomeEmail)
       #
       #   # Mapping inputs:
       #

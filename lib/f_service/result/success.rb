@@ -67,8 +67,8 @@ module FService
       #   class UsersController < BaseController
       #     def create
       #       result = User::Create.(user_params)
-      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                            .then { |user| User::Login.(user: user) }
+      #                            .and_then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .and_then { |user| User::Login.(user: user) }
       #
       #       if result.successful?
       #         json_success(result.value)
@@ -80,14 +80,14 @@ module FService
       #
       # @yieldparam value pass {#value} to a block
       # @yieldparam type pass {#type} to a block
-      def then
+      def and_then
         yield(*to_ary)
       end
-      alias and_then then
+      alias then and_then
 
       # Returns itself to the given block.
       # Use this to chain multiple actions or service calls (only valid when they return a Result).
-      # It works just like the `.then` method, but only runs if service is a Failure.
+      # It works just like the `.and_then` method, but only runs if service is a Failure.
       #
       #
       # @example
@@ -96,8 +96,8 @@ module FService
       #
       #     def run
       #       check_api_status
-      #         .then { update_user }
-      #         .catch { create_update_worker }
+      #         .and_then { update_user }
+      #         .or_else { create_update_worker }
       #     end
       #
       #     private

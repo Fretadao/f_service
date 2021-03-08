@@ -61,7 +61,7 @@ module FService
 
       # Returns the current error to the given block.
       # Use this to chain multiple service calls (since all services return Results).
-      # It works just like the `.then` method, but only runs if the result is a Failure.
+      # It works just like the `.and_then` method, but only runs if the result is a Failure.
       #
       #
       # @example
@@ -70,8 +70,8 @@ module FService
       #
       #     def run
       #       check_api_status
-      #         .then { update_user }
-      #         .catch { create_update_worker }
+      #         .and_then { update_user }
+      #         .or_else { create_update_worker }
       #     end
       #
       #     private
@@ -95,8 +95,8 @@ module FService
       #   class UsersController < BaseController
       #     def create
       #       result = User::Create.(user_params) # if this fails the following calls won't run
-      #                            .then { |user| User::SendWelcomeEmail.(user: user) }
-      #                            .then { |user| User::Login.(user: user) }
+      #                            .and_then { |user| User::SendWelcomeEmail.(user: user) }
+      #                            .and_then { |user| User::Login.(user: user) }
       #
       #       if result.successful?
       #         json_success(result.value)
@@ -107,10 +107,10 @@ module FService
       #   end
       #
       # @return [self]
-      def then
+      def and_then
         self
       end
-      alias and_then then
+      alias then and_then
 
       # Outputs a string representation of the object
       #
