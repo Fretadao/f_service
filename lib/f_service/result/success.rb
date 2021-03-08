@@ -83,6 +83,7 @@ module FService
       def then
         yield(*to_ary)
       end
+      alias and_then then
 
       # Returns itself to the given block.
       # Use this to chain multiple actions or service calls (only valid when they return a Result).

@@ -37,7 +37,7 @@ RSpec.describe FService::Result::Failure do
       subject(:chain) do
         FService::Result::Success.new('This...')
                                  .then { |value| described_class.new(value + ' Fails!') }
-                                 .then { |_value| raise "This won't ever run!" }
+                                 .and_then { |_value| raise "This won't ever run!" }
       end
 
       it { expect(chain).to be_failed }
@@ -66,7 +66,7 @@ RSpec.describe FService::Result::Failure do
       subject(:chain) do
         FService::Result::Success.new('This...')
                                  .then { |value| described_class.new(value + ' Fails!') }
-                                 .or { |error| described_class.new(error + ' Again!') }
+                                 .or_else { |error| described_class.new(error + ' Again!') }
                                  .then { |_value| raise "This won't ever run!" }
       end
 

@@ -38,7 +38,7 @@ RSpec.describe FService::Result::Success do
         described_class.new('Yay!')
                        .then { |value| described_class.new(value + ' It') }
                        .then { |value| described_class.new(value + ' works!', :ok) }
-                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
+                       .and_then { |value, type| described_class.new(value + " Type: #{type}!") }
       end
 
       it { expect(chain).to be_successful }
@@ -67,7 +67,7 @@ RSpec.describe FService::Result::Success do
     context 'when chaining results with a catch block using the `or` alias' do
       subject(:chain) do
         described_class.new('Yay!')
-                       .or { FService::Result::Failure.new('Shoot! It failed!') }
+                       .or_else { FService::Result::Failure.new('Shoot! It failed!') }
                        .then { |value| described_class.new(value + ' It') }
                        .then { |value| described_class.new(value + ' works!', :ok) }
                        .then { |value, type| described_class.new(value + " Type: #{type}!") }

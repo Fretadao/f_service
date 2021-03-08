@@ -110,6 +110,7 @@ module FService
       def then
         self
       end
+      alias and_then then
 
       # Outputs a string representation of the object
       #
