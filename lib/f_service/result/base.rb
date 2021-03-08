@@ -7,7 +7,7 @@ module FService
     #
     # @abstract
     class Base
-      %i[initialize then successful? failed? value value! error].each do |method_name|
+      %i[initialize and_then successful? failed? value value! error].each do |method_name|
         define_method(method_name) do |*_args|
           raise NotImplementedError, "called #{method_name} on class Result::Base"
         end

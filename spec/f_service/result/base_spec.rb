@@ -13,7 +13,7 @@ RSpec.describe FService::Result::Base do
     expect { described_class.new }.to raise_error NotImplementedError, 'called initialize on class Result::Base'
   end
 
-  %i[then successful? failed? value value! error].each do |method_name|
+  %i[and_then successful? failed? value value! error].each do |method_name|
     context 'when subclasses do not override methods' do
       subject(:method_call) { test_class.new.public_send(method_name) }
 
