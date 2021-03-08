@@ -108,7 +108,7 @@ module FService
         self
       end
 
-      alias or catch
+      alias or_else catch
 
       # Outputs a string representation of the object
       #
