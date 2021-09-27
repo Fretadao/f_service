@@ -19,65 +19,6 @@ RSpec.describe FService::Result::Failure do
     it { expect(failure.type).to eq(:error) }
   end
 
-  describe '#on' do
-    context 'when matching results' do
-      subject(:failure_match) do
-        described_class.new('Whoops!').on(
-          success: ->(_value) { raise "This won't ever run" },
-          failure: ->(error) { return error + '!' }
-        )
-      end
-
-      it 'runs on the failure path' do
-        expect(failure_match).to eq('Whoops!!')
-      end
-    end
-
-    context 'when chaining results' do
-      subject(:chain) do
-        FService::Result::Success.new('This...')
-                                 .then { |value| described_class.new(value + ' Fails!') }
-                                 .and_then { |_value| raise "This won't ever run!" }
-      end
-
-      it { expect(chain).to be_failed }
-
-      it 'shorts circuit on failures' do
-        expect(chain.error).to eq('This... Fails!')
-      end
-    end
-
-    context 'when chaining results with a catch block' do
-      subject(:chain) do
-        FService::Result::Success.new('This...')
-                                 .then { |value| described_class.new(value + ' Fails!') }
-                                 .catch { |error| described_class.new(error + ' Again!') }
-                                 .then { |_value| raise "This won't ever run!" }
-      end
-
-      it { expect(chain).to be_failed }
-
-      it 'executes the catch block ' do
-        expect(chain.error).to eq('This... Fails! Again!')
-      end
-    end
-
-    context 'when chaining results with a catch block using the `or` alias' do
-      subject(:chain) do
-        FService::Result::Success.new('This...')
-                                 .then { |value| described_class.new(value + ' Fails!') }
-                                 .or_else { |error| described_class.new(error + ' Again!') }
-                                 .then { |_value| raise "This won't ever run!" }
-      end
-
-      it { expect(chain).to be_failed }
-
-      it 'executes the catch block ' do
-        expect(chain.error).to eq('This... Fails! Again!')
-      end
-    end
-  end
-
   describe '#on_failure' do
     subject(:on_failure_callback) do
       failure.on_failure { |value| value << 1 }

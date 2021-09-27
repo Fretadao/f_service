@@ -19,68 +19,6 @@ RSpec.describe FService::Result::Success do
     it { expect(success.type).to eq(:ok) }
   end
 
-  describe '#on' do
-    context 'when matching results' do
-      subject(:success_match) do
-        described_class.new('Yay!').on(
-          success: ->(value) { return value + '!' },
-          failure: ->(_error) { raise "This won't ever run" }
-        )
-      end
-
-      it 'runs on the success path' do
-        expect(success_match).to eq('Yay!!')
-      end
-    end
-
-    context 'when chaining results' do
-      subject(:chain) do
-        described_class.new('Yay!')
-                       .then { |value| described_class.new(value + ' It') }
-                       .then { |value| described_class.new(value + ' works!', :ok) }
-                       .and_then { |value, type| described_class.new(value + " Type: #{type}!") }
-      end
-
-      it { expect(chain).to be_successful }
-
-      it 'chains successful results' do
-        expect(chain.value).to eq('Yay! It works! Type: ok!')
-      end
-    end
-
-    context 'when chaining results with a catch block' do
-      subject(:chain) do
-        described_class.new('Yay!')
-                       .catch { FService::Result::Failure.new('Shoot! It failed!') }
-                       .then { |value| described_class.new(value + ' It') }
-                       .then { |value| described_class.new(value + ' works!', :ok) }
-                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
-      end
-
-      it { expect(chain).to be_successful }
-
-      it 'chains successful results' do
-        expect(chain.value).to eq('Yay! It works! Type: ok!')
-      end
-    end
-
-    context 'when chaining results with a catch block using the `or` alias' do
-      subject(:chain) do
-        described_class.new('Yay!')
-                       .or_else { FService::Result::Failure.new('Shoot! It failed!') }
-                       .then { |value| described_class.new(value + ' It') }
-                       .then { |value| described_class.new(value + ' works!', :ok) }
-                       .then { |value, type| described_class.new(value + " Type: #{type}!") }
-      end
-
-      it { expect(chain).to be_successful }
-
-      it 'chains successful results' do
-        expect(chain.value).to eq('Yay! It works! Type: ok!')
-      end
-    end
-  end
-
   describe '#on_success' do
     subject(:on_success_callback) do
       success.on_success { |value| value << 1 }
