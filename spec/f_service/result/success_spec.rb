@@ -147,7 +147,7 @@ RSpec.describe FService::Result::Success do
   describe '#and_then' do
     subject(:success) { described_class.new('Pax', :ok) }
 
-    it 'returns the guiven block result' do
+    it 'returns the given block result' do
       expect(success.and_then { |value| "Hello, #{value}!" }).to eq('Hello, Pax!')
     end
   end
