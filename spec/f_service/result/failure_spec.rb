@@ -141,6 +141,26 @@ RSpec.describe FService::Result::Failure do
     end
   end
 
+  describe '#or_else' do
+    subject(:failure) { described_class.new('User not found', :error) }
+
+    it 'returns the given block result' do
+      expect(failure.or_else { |error| "Failure: #{error}" }).to eq('Failure: User not found')
+    end
+  end
+
+  describe '#and_then' do
+    subject(:failure) { described_class.new('Pax', :ok) }
+
+    it 'does not yields the block' do
+      expect { |block| failure.and_then(&block) }.not_to yield_control
+    end
+
+    it 'returns itself' do
+      expect(failure.and_then { 'an error happened' }).to eq(failure)
+    end
+  end
+
   describe '#to_s' do
     it { expect(failure.to_s).to eq 'Failure("Whoops!")' }
   end

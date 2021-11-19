@@ -144,6 +144,26 @@ RSpec.describe FService::Result::Success do
     end
   end
 
+  describe '#and_then' do
+    subject(:success) { described_class.new('Pax', :ok) }
+
+    it 'returns the guiven block result' do
+      expect(success.and_then { |value| "Hello, #{value}!" }).to eq('Hello, Pax!')
+    end
+  end
+
+  describe '#or_else' do
+    subject(:success) { described_class.new('Pax', :ok) }
+
+    it 'does not yields the block' do
+      expect { |block| success.or_else(&block) }.not_to yield_control
+    end
+
+    it 'returns itself' do
+      expect(success.or_else { 'an error happened' }).to eq(success)
+    end
+  end
+
   describe '#to_s' do
     it { expect(success.to_s).to eq 'Success("Yay!")' }
   end
