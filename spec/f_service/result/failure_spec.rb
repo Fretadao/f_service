@@ -80,25 +80,42 @@ RSpec.describe FService::Result::Failure do
 
   describe '#on_failure' do
     subject(:on_failure_callback) do
-      failure.on_failure { |value| value << 1 }
-             .on_failure(:error) { |value, type| value << type }
-             .on_failure(:other_error) { |value| value << 3 }
-             .on_failure(:error, :other_error, :another_error) do |value|
-               value << "That's no moon"
-             end
+      failure.on_failure(:error) { |array, type| array << type }
+             .on_failure(:other_error) { |array| array << 3 }
+             .on_failure { |array| array << "That's no moon" }
     end
 
     let(:array) { [] }
-    let(:failure) { described_class.new(array, :error) }
+    let(:failure) { described_class.new(array, type) }
 
-    it 'returns itself' do
-      expect(on_failure_callback).to eq failure
+    describe 'return' do
+      let(:type) { :error }
+
+      it 'returns itself' do
+        expect(on_failure_callback).to eq failure
+      end
     end
 
-    it 'evaluates the given block on failure' do
-      on_failure_callback
+    describe 'callback matching' do
+      context 'when no type matches with error type' do
+        let(:type) { :new_error }
 
-      expect(array).to eq [1, :error, "That's no moon"]
+        it 'evaluates the block wich matches without specifying error' do
+          on_failure_callback
+
+          expect(array).to eq ["That's no moon"]
+        end
+      end
+
+      context 'when some type matches with error type' do
+        let(:type) { :error }
+
+        it 'evaluates only the first given block on failure' do
+          on_failure_callback
+
+          expect(array).to eq [:error]
+        end
+      end
     end
   end
 

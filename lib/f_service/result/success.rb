@@ -22,7 +22,6 @@ module FService
       def initialize(value, type = nil)
         @value = value
         @type = type
-        freeze
       end
 
       # Returns true.

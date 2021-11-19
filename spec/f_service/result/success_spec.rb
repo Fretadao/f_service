@@ -83,23 +83,42 @@ RSpec.describe FService::Result::Success do
 
   describe '#on_success' do
     subject(:on_success_callback) do
-      success.on_success { |value| value << 1 }
-             .on_success(:ok) { |value, type| value << type }
+      success.on_success(:ok) { |value, type| value << type }
              .on_success(:still_ok) { |value| value << 3 }
-             .on_success(:ok, :still_ok) { |value| value << 'one more time' }
+             .on_success { |value| value << 'one more time' }
     end
 
     let(:array) { [] }
-    let(:success) { described_class.new(array, :ok) }
+    let(:success) { described_class.new(array, type) }
 
-    it 'returns itself' do
-      expect(on_success_callback).to eq success
+    describe 'return' do
+      let(:type) { :ok }
+
+      it 'returns itself' do
+        expect(on_success_callback).to eq success
+      end
     end
 
-    it 'evaluates the given block on success' do
-      on_success_callback
+    describe 'callback matching' do
+      context 'when no type matches with success type' do
+        let(:type) { :new_success }
 
-      expect(array).to eq [1, :ok, 'one more time']
+        it 'evaluates the block wich matches without specifying success' do
+          on_success_callback
+
+          expect(array).to eq ['one more time']
+        end
+      end
+
+      context 'when some type matches with success type' do
+        let(:type) { :ok }
+
+        it 'evaluates only the first given block on failure' do
+          on_success_callback
+
+          expect(array).to eq [:ok]
+        end
+      end
     end
   end
 

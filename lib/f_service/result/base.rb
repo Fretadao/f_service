@@ -75,7 +75,10 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_success(*target_types)
-        yield(*to_ary) if successful? && expected_type?(target_types)
+        if successful? && uncaptured? && expected_type?(target_types)
+          yield(*to_ary)
+          @captured = true
+        end
 
         self
       end
@@ -104,7 +107,10 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_failure(*target_types)
-        yield(*to_ary) if failed? && expected_type?(target_types)
+        if failed? && uncaptured? && expected_type?(target_types)
+          yield(*to_ary)
+          @captured = true
+        end
 
         self
       end
@@ -119,6 +125,12 @@ module FService
       end
 
       private
+
+      attr_reader :captured
+
+      def uncaptured?
+        !@captured
+      end
 
       def expected_type?(target_types)
         target_types.include?(type) || target_types.empty?

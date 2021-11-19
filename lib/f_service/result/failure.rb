@@ -23,7 +23,6 @@ module FService
       def initialize(error, type = nil)
         @error = error
         @type = type
-        freeze
       end
 
       # Returns false.
