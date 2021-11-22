@@ -105,10 +105,18 @@ RSpec.describe FService::Result::Failure do
 
           expect(array).to eq ["That's no moon"]
         end
+
+        it 'freezes the result' do
+          expect(on_failure_callback).to be_frozen
+        end
       end
 
       context 'when some type matches with error type' do
         let(:type) { :error }
+
+        it 'freezes the result' do
+          expect(on_failure_callback).to be_frozen
+        end
 
         it 'evaluates only the first given block on failure' do
           on_failure_callback
@@ -132,6 +140,10 @@ RSpec.describe FService::Result::Failure do
 
     it 'returns itself' do
       expect(on_success_callback).to eq failure
+    end
+
+    it 'keeps the result unfreeze' do
+      expect(on_success_callback).not_to be_frozen
     end
 
     it 'does not evaluate blocks on success' do

@@ -103,6 +103,10 @@ RSpec.describe FService::Result::Success do
       context 'when no type matches with success type' do
         let(:type) { :new_success }
 
+        it 'freezes the result' do
+          expect(on_success_callback).to be_frozen
+        end
+
         it 'evaluates the block wich matches without specifying success' do
           on_success_callback
 
@@ -112,6 +116,10 @@ RSpec.describe FService::Result::Success do
 
       context 'when some type matches with success type' do
         let(:type) { :ok }
+
+        it 'freezes the result' do
+          expect(on_success_callback).to be_frozen
+        end
 
         it 'evaluates only the first given block on failure' do
           on_success_callback
@@ -135,6 +143,10 @@ RSpec.describe FService::Result::Success do
 
     it 'returns itself' do
       expect(on_failure_callback).to eq success
+    end
+
+    it 'keeps the result unfreeze' do
+      expect(on_failure_callback).not_to be_frozen
     end
 
     it 'does not evaluate the given block on failure' do

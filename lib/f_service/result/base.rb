@@ -78,6 +78,7 @@ module FService
         if successful? && uncaptured? && expected_type?(target_types)
           yield(*to_ary)
           @captured = true
+          freeze
         end
 
         self
@@ -110,6 +111,7 @@ module FService
         if failed? && uncaptured? && expected_type?(target_types)
           yield(*to_ary)
           @captured = true
+          freeze
         end
 
         self
