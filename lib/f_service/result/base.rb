@@ -130,8 +130,12 @@ module FService
 
       attr_reader :captured
 
+      def captured?
+        @captured
+      end
+
       def uncaptured?
-        !@captured
+        !captured?
       end
 
       def expected_type?(target_types)
