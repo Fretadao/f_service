@@ -13,6 +13,11 @@ module FService
         end
       end
 
+      # You usually shouldn't call this directly. See {FService::Base#Failure} and {FService::Base#Success}.
+      def initialize
+        @captured = false
+      end
+
       # "Pattern matching"-like method for results.
       # It will run the success path if Result is a Success.
       # Otherwise, it will run the failure path.
