@@ -15,7 +15,7 @@ module FService
 
       # You usually shouldn't call this directly. See {FService::Base#Failure} and {FService::Base#Success}.
       def initialize
-        @captured = false
+        @handled = false
       end
 
       # "Pattern matching"-like method for results.
@@ -80,9 +80,9 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_success(*target_types)
-        if successful? && uncaptured? && expected_type?(target_types)
+        if successful? && unhandled? && expected_type?(target_types)
           yield(*to_ary)
-          @captured = true
+          @handled = true
           freeze
         end
 
@@ -113,9 +113,9 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_failure(*target_types)
-        if failed? && uncaptured? && expected_type?(target_types)
+        if failed? && unhandled? && expected_type?(target_types)
           yield(*to_ary)
-          @captured = true
+          @handled = true
           freeze
         end
 
@@ -133,14 +133,14 @@ module FService
 
       private
 
-      attr_reader :captured
+      attr_reader :handled
 
-      def captured?
-        @captured
+      def handled?
+        @handled
       end
 
-      def uncaptured?
-        !captured?
+      def unhandled?
+        !handled?
       end
 
       def expected_type?(target_types)
