@@ -122,8 +122,8 @@ The code above could be rewritten using the `#on_success` and `#on_failure` hook
 class UsersController < BaseController
   def create
     User::Create.(user_params)
-                .on_success { |value| return json_success(value) }
-                .on_failure { |error| return json_error(error) }
+                .on_success(unhandled: true) { |value| return json_success(value) }
+                .on_failure(unhandled: true) { |error| return json_error(error) }
   end
 end
 ```

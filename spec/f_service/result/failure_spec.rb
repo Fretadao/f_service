@@ -79,17 +79,10 @@ RSpec.describe FService::Result::Failure do
   end
 
   describe '#on_failure' do
-    subject(:on_failure_callback) do
-      failure.on_failure(:error) { |array, type| array << type }
-             .on_failure(:other_error) { |array| array << 3 }
-             .on_failure { |array| array << "That's no moon" }
-    end
-
-    let(:array) { [] }
-    let(:failure) { described_class.new(array, type) }
-
     describe 'return' do
-      let(:type) { :error }
+      subject(:on_failure_callback) { failure.on_failure(unhundled: true) { 'some recovering' } }
+
+      let(:failure) { described_class.new([], :error) }
 
       it 'returns itself' do
         expect(on_failure_callback).to eq failure
@@ -97,31 +90,66 @@ RSpec.describe FService::Result::Failure do
     end
 
     describe 'callback matching' do
-      context 'when no type matches with error type' do
-        let(:type) { :new_error }
+      context 'when no type is especified' do
+        subject(:on_failure_callback) { failure.on_failure { |array| array << "That's no moon" } }
 
-        it 'evaluates the block wich matches without specifying error' do
-          on_failure_callback
+        let(:array) { [] }
+        let(:failure) { described_class.new(array, :error) }
 
-          expect(array).to eq ["That's no moon"]
+        before { allow(FService).to receive(:deprecate!) }
+
+        it 'handles the error' do
+          expect { on_failure_callback }.to change { array }.from([]).to(["That's no moon"])
         end
 
-        it 'freezes the result' do
-          expect(on_failure_callback).to be_frozen
+        it 'warns deprecation about passing no arguments' do
+          on_failure_callback
+
+          expect(FService).to have_received(:deprecate!).with(
+            name: "#{described_class}#on_failure without target type",
+            alternative: "#{described_class}#on_failure(unhandled: true)",
+            from: an_instance_of(String)
+          )
         end
       end
 
-      context 'when some type matches with error type' do
-        let(:type) { :error }
-
-        it 'freezes the result' do
-          expect(on_failure_callback).to be_frozen
+      context 'when type is especified' do
+        subject(:on_failure_callback) do
+          failure
+            .on_failure(:error) { |array, type| array << type }
+            .on_failure(:other_error) { |array| array << 3 }
+            .on_failure(unhandled: true) { |array| array << "That's no moon" }
         end
 
-        it 'evaluates only the first given block on failure' do
-          on_failure_callback
+        let(:array) { [] }
+        let(:failure) { described_class.new(array, type) }
 
-          expect(array).to eq [:error]
+        context 'and no type matches with error type' do
+          let(:type) { :unknown_error }
+
+          it 'evaluates the block wich matches without specifying error' do
+            on_failure_callback
+
+            expect(array).to eq ["That's no moon"]
+          end
+
+          it 'freezes the result' do
+            expect(on_failure_callback).to be_frozen
+          end
+        end
+
+        context 'and some type matches with error type' do
+          let(:type) { :error }
+
+          it 'freezes the result' do
+            expect(on_failure_callback).to be_frozen
+          end
+
+          it 'evaluates only the first given block on failure' do
+            on_failure_callback
+
+            expect(array).to eq [:error]
+          end
         end
       end
     end
@@ -129,9 +157,9 @@ RSpec.describe FService::Result::Failure do
 
   describe '#on_success' do
     subject(:on_success_callback) do
-      failure.on_success { |value| value << 1 }
+      failure.on_success(unhandled: true) { |value| value << 1 }
              .on_success(:error) { |value| value << 2 }
-             .on_success { raise "This won't ever run" }
+             .on_success(unhandled: true) { raise "This won't ever run" }
              .on_success(:error, :other_error) { raise 'Chewbacca is a Wookie warrior' }
     end
 

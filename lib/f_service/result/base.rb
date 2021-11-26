@@ -7,6 +7,8 @@ module FService
     #
     # @abstract
     class Base
+      UNHANDLED_OPTION = { unhandled: true }.freeze
+
       %i[initialize and_then successful? failed? value value! error].each do |method_name|
         define_method(method_name) do |*_args|
           raise NotImplementedError, "called #{method_name} on class Result::Base"
@@ -64,8 +66,8 @@ module FService
       #     def update
       #       User::Update.(user: user)
       #                   .on_success(:type, :type2) { return json_success({ status: :ok }) } # run only if type matches
-      #                   .on_success { |value| return json_success(value) }
-      #                   .on_failure { |error| return json_error(error) } # this won't run
+      #                   .on_success(unhandled: true) { |value| return json_success(value) }
+      #                   .on_failure(unhandled: true) { |error| return json_error(error) } # this won't run
       #     end
       #
       #     private
@@ -80,6 +82,8 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_success(*target_types)
+        old_callback_any_matching_warn(method_name: __method__, from: caller[0]) if target_types.empty?
+
         if successful? && unhandled? && expected_type?(target_types)
           yield(*to_ary)
           @handled = true
@@ -96,9 +100,9 @@ module FService
       #   class UsersController < BaseController
       #     def update
       #       User::Update.(user: user)
-      #                   .on_success { |value| return json_success(value) } # this won't run
+      #                   .on_success(:unhandled: true) { |value| return json_success(value) } # this won't run
       #                   .on_failure(:type, :type2) { |error| return json_error(error) } # runs only if type matches
-      #                   .on_failure { |error| return json_error(error) }
+      #                   .on_failure(:unhandled: true) { |error| return json_error(error) }
       #     end
       #
       #     private
@@ -113,6 +117,8 @@ module FService
       # @return [Success, Failure] the original Result object
       # @api public
       def on_failure(*target_types)
+        old_callback_any_matching_warn(method_name: __method__, from: caller[0]) if target_types.empty?
+
         if failed? && unhandled? && expected_type?(target_types)
           yield(*to_ary)
           @handled = true
@@ -144,7 +150,19 @@ module FService
       end
 
       def expected_type?(target_types)
-        target_types.include?(type) || target_types.empty?
+        target_types.empty? || given_unhandled_option?(target_types) ? true : target_types.include?(type)
+      end
+
+      def given_unhandled_option?(target_types)
+        target_types.first == UNHANDLED_OPTION
+      end
+
+      def old_callback_any_matching_warn(method_name:, from:)
+        FService.deprecate!(
+          name: "#{self.class}##{method_name} without target type",
+          alternative: "#{self.class}##{method_name}(unhandled: true)",
+          from: from
+        )
       end
     end
   end

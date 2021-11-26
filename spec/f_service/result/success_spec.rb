@@ -82,17 +82,10 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#on_success' do
-    subject(:on_success_callback) do
-      success.on_success(:ok) { |value, type| value << type }
-             .on_success(:still_ok) { |value| value << 3 }
-             .on_success { |value| value << 'one more time' }
-    end
-
-    let(:array) { [] }
-    let(:success) { described_class.new(array, type) }
-
     describe 'return' do
-      let(:type) { :ok }
+      subject(:on_success_callback) { success.on_success(unhundled: true) { 'some recovering' } }
+
+      let(:success) { described_class.new([], :ok) }
 
       it 'returns itself' do
         expect(on_success_callback).to eq success
@@ -100,31 +93,65 @@ RSpec.describe FService::Result::Success do
     end
 
     describe 'callback matching' do
-      context 'when no type matches with success type' do
-        let(:type) { :new_success }
+      context 'when no type is especified' do
+        subject(:on_success_callback) { success.on_success { |array| array << 'It works!' } }
 
-        it 'freezes the result' do
-          expect(on_success_callback).to be_frozen
+        let(:array) { [] }
+        let(:success) { described_class.new(array, :error) }
+
+        before { allow(FService).to receive(:deprecate!) }
+
+        it 'handles the error' do
+          expect { on_success_callback }.to change { array }.from([]).to(['It works!'])
         end
 
-        it 'evaluates the block wich matches without specifying success' do
+        it 'warns deprecation about passing no arguments' do
           on_success_callback
 
-          expect(array).to eq ['one more time']
+          expect(FService).to have_received(:deprecate!).with(
+            name: "#{described_class}#on_success without target type",
+            alternative: "#{described_class}#on_success(unhandled: true)",
+            from: an_instance_of(String)
+          )
         end
       end
 
-      context 'when some type matches with success type' do
-        let(:type) { :ok }
-
-        it 'freezes the result' do
-          expect(on_success_callback).to be_frozen
+      context 'when some type is especified' do
+        subject(:on_success_callback) do
+          success.on_success(:ok) { |value, type| value << type }
+                 .on_success(:still_ok) { |value| value << 3 }
+                 .on_success(unhandled: true) { |value| value << 'one more time' }
         end
 
-        it 'evaluates only the first given block on failure' do
-          on_success_callback
+        let(:array) { [] }
+        let(:success) { described_class.new(array, type) }
 
-          expect(array).to eq [:ok]
+        context 'and no type matches with success type' do
+          let(:type) { :unknow_success }
+
+          it 'freezes the result' do
+            expect(on_success_callback).to be_frozen
+          end
+
+          it 'evaluates the block wich matches without specifying success' do
+            on_success_callback
+
+            expect(array).to eq ['one more time']
+          end
+        end
+
+        context 'and some type matches with success type' do
+          let(:type) { :ok }
+
+          it 'freezes the result' do
+            expect(on_success_callback).to be_frozen
+          end
+
+          it 'evaluates only the first given block on failure' do
+            on_success_callback
+
+            expect(array).to eq [:ok]
+          end
         end
       end
     end
@@ -132,9 +159,9 @@ RSpec.describe FService::Result::Success do
 
   describe '#on_failure' do
     subject(:on_failure_callback) do
-      success.on_failure { |value| value << 1 }
+      success.on_failure(unhandled: true) { |value| value << 1 }
              .on_failure(:ok) { |value| value << 2 }
-             .on_failure { raise "This won't ever run" }
+             .on_failure(unhandled: true) { raise "This won't ever run" }
              .on_failure(:ok, :not_ok) { raise 'This is a contradiction' }
     end
 
