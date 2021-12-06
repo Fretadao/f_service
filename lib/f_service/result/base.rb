@@ -139,8 +139,6 @@ module FService
 
       private
 
-      attr_reader :handled
-
       def handled?
         @handled
       end
