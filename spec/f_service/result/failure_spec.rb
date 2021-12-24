@@ -80,7 +80,7 @@ RSpec.describe FService::Result::Failure do
 
   describe '#on_failure' do
     describe 'return' do
-      subject(:on_failure_callback) { failure.on_failure(unhundled: true) { 'some recovering' } }
+      subject(:on_failure_callback) { failure.on_failure(unhandled: true) { 'some recovering' } }
 
       let(:failure) { described_class.new([], :error) }
 
@@ -100,16 +100,6 @@ RSpec.describe FService::Result::Failure do
 
         it 'handles the error' do
           expect { on_failure_callback }.to change { array }.from([]).to(["That's no moon"])
-        end
-
-        it 'warns deprecation about passing no arguments' do
-          on_failure_callback
-
-          expect(FService).to have_received(:deprecate!).with(
-            name: "#{described_class}#on_failure without target type",
-            alternative: "#{described_class}#on_failure(unhandled: true)",
-            from: an_instance_of(String)
-          )
         end
       end
 

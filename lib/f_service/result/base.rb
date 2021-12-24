@@ -7,8 +7,6 @@ module FService
     #
     # @abstract
     class Base
-      UNHANDLED_OPTION = { unhandled: true }.freeze
-
       %i[initialize and_then successful? failed? value value! error].each do |method_name|
         define_method(method_name) do |*_args|
           raise NotImplementedError, "called #{method_name} on class Result::Base"
@@ -81,10 +79,8 @@ module FService
       # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
-      def on_success(*target_types)
-        old_callback_any_matching_warn(method_name: __method__, from: caller[0]) if target_types.empty?
-
-        if successful? && unhandled? && expected_type?(target_types)
+      def on_success(*target_types, unhandled: false)
+        if successful? && unhandled? && expected_type?(target_types, unhandled: unhandled)
           yield(*to_ary)
           @handled = true
           freeze
@@ -116,10 +112,8 @@ module FService
       # @yieldparam type type of the failure object
       # @return [Success, Failure] the original Result object
       # @api public
-      def on_failure(*target_types)
-        old_callback_any_matching_warn(method_name: __method__, from: caller[0]) if target_types.empty?
-
-        if failed? && unhandled? && expected_type?(target_types)
+      def on_failure(*target_types, unhandled: false)
+        if failed? && unhandled? && expected_type?(target_types, unhandled: unhandled)
           yield(*to_ary)
           @handled = true
           freeze
@@ -147,20 +141,8 @@ module FService
         !handled?
       end
 
-      def expected_type?(target_types)
-        target_types.empty? || given_unhandled_option?(target_types) ? true : target_types.include?(type)
-      end
-
-      def given_unhandled_option?(target_types)
-        target_types.first == UNHANDLED_OPTION
-      end
-
-      def old_callback_any_matching_warn(method_name:, from:)
-        FService.deprecate!(
-          name: "#{self.class}##{method_name} without target type",
-          alternative: "#{self.class}##{method_name}(unhandled: true)",
-          from: from
-        )
+      def expected_type?(target_types, unhandled:)
+        target_types.empty? || unhandled || target_types.include?(type)
       end
     end
   end

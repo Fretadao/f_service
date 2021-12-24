@@ -122,6 +122,19 @@ The code above could be rewritten using the `#on_success` and `#on_failure` hook
 class UsersController < BaseController
   def create
     User::Create.(user_params)
+                .on_success { |value| return json_success(value) }
+                .on_failure { |error| return json_error(error) }
+  end
+end
+```
+
+Or else it is possible to specify an unhandled option to ensure that the callback will process that message anyway the
+error.
+
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create.(user_params)
                 .on_success(unhandled: true) { |value| return json_success(value) }
                 .on_failure(unhandled: true) { |error| return json_error(error) }
   end

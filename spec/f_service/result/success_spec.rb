@@ -83,7 +83,7 @@ RSpec.describe FService::Result::Success do
 
   describe '#on_success' do
     describe 'return' do
-      subject(:on_success_callback) { success.on_success(unhundled: true) { 'some recovering' } }
+      subject(:on_success_callback) { success.on_success(unhandled: true) { 'some recovering' } }
 
       let(:success) { described_class.new([], :ok) }
 
@@ -101,18 +101,8 @@ RSpec.describe FService::Result::Success do
 
         before { allow(FService).to receive(:deprecate!) }
 
-        it 'handles the error' do
+        it 'handles the success' do
           expect { on_success_callback }.to change { array }.from([]).to(['It works!'])
-        end
-
-        it 'warns deprecation about passing no arguments' do
-          on_success_callback
-
-          expect(FService).to have_received(:deprecate!).with(
-            name: "#{described_class}#on_success without target type",
-            alternative: "#{described_class}#on_success(unhandled: true)",
-            from: an_instance_of(String)
-          )
         end
       end
 
