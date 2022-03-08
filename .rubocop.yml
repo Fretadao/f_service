@@ -17,3 +17,17 @@ Style/DocumentationMethod:
 Naming/MethodName:
   Exclude:
     - lib/f_service/base.rb
+
+RSpec/ContextWording:
+  Prefixes:
+    - and
+    - but
+    - when
+    - with
+    - without
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/NestedGroups:
+  Enabled: false

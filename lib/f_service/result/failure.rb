@@ -21,9 +21,9 @@ module FService
       #
       # @param error [Object] failure value.
       def initialize(error, type = nil)
+        super()
         @error = error
         @type = type
-        freeze
       end
 
       # Returns false.
