@@ -64,6 +64,22 @@ module FService
       #     def update
       #       User::Update.(user: user)
       #                   .on_success(:type, :type2) { return json_success({ status: :ok }) } # run only if type matches
+      #                   .on_success { |value| return json_success(value) }
+      #                   .on_failure { |error| return json_error(error) } # this won't run
+      #     end
+      #
+      #     private
+      #
+      #     def user
+      #       @user ||= User.find_by!(slug: params[:slug])
+      #     end
+      #   end
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def update
+      #       User::Update.(user: user)
+      #                   .on_success(:type, :type2) { return json_success({ status: :ok }) } # run only if type matches
       #                   .on_success(unhandled: true) { |value| return json_success(value) }
       #                   .on_failure(unhandled: true) { |error| return json_error(error) } # this won't run
       #     end
@@ -91,6 +107,22 @@ module FService
 
       # This hook runs if the result is failed.
       # Can receive one or more types to be checked before running the given block.
+      #
+      # @example
+      #   class UsersController < BaseController
+      #     def update
+      #       User::Update.(user: user)
+      #                   .on_success { |value| return json_success(value) } # this won't run
+      #                   .on_failure(:type, :type2) { |error| return json_error(error) } # runs only if type matches
+      #                   .on_failure { |error| return json_error(error) }
+      #     end
+      #
+      #     private
+      #
+      #     def user
+      #       @user ||= User.find_by!(slug: params[:slug])
+      #     end
+      #   end
       #
       # @example
       #   class UsersController < BaseController

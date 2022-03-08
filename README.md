@@ -141,6 +141,16 @@ class UsersController < BaseController
 end
 ```
 
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create.(user_params)
+                .on_success { |value| return json_success(value) }
+                .on_failure { |error| return json_error(error) }
+  end
+end
+```
+
 > You can ignore any of the callbacks, if you want to.
 
 Going further, you can match the Result type, in case you want to handle them differently:
