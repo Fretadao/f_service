@@ -20,9 +20,9 @@ module FService
       #
       # @param value [Object] success value.
       def initialize(value, type = nil)
+        super()
         @value = value
         @type = type
-        freeze
       end
 
       # Returns true.
