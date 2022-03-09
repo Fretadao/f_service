@@ -7,7 +7,7 @@ module FService
     #
     # @abstract
     class Base
-      %i[initialize and_then successful? failed? value value! error].each do |method_name|
+      %i[and_then successful? failed? value value! error].each do |method_name|
         define_method(method_name) do |*_args|
           raise NotImplementedError, "called #{method_name} on class Result::Base"
         end
@@ -16,44 +16,6 @@ module FService
       # You usually shouldn't call this directly. See {FService::Base#Failure} and {FService::Base#Success}.
       def initialize
         @handled = false
-      end
-
-      # "Pattern matching"-like method for results.
-      # It will run the success path if Result is a Success.
-      # Otherwise, it will run the failure path.
-      #
-      #
-      # @example
-      #   class UsersController < BaseController
-      #     def update
-      #       User::Update.(user: user).on(
-      #         success: ->(value) { return json_success(value) },
-      #         failure: ->(error) { return json_error(error) }
-      #       )
-      #     end
-      #
-      #     private
-      #
-      #     def user
-      #       @user ||= User.find_by!(slug: params[:slug])
-      #     end
-      #   end
-      #
-      # @param success [#call] a lambda (or anything that responds to #call) to run on success
-      # @param failure [#call] a lambda (or anything that responds to #call) to run on failure
-      # @deprecated Use {#on_success} and/or {#on_failure} instead.
-      # @api public
-      def on(success:, failure:)
-        FService.deprecate!(
-          name: "#{self.class}##{__method__}",
-          alternative: '#on_success and/or #on_failure'
-        )
-
-        if successful?
-          success.call(value)
-        else
-          failure.call(error)
-        end
       end
 
       # This hook runs if the result is successful.
