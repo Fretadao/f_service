@@ -7,6 +7,7 @@ end
 
 require 'bundler/setup'
 require 'f_service'
+require 'spec'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
