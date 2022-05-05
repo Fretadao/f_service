@@ -3,20 +3,22 @@
 require 'spec_helper'
 
 RSpec.describe FService::Result::Failure do
-  subject(:failure) { described_class.new('Whoops!') }
+  describe 'initialize' do
+    subject(:failure) { described_class.new('Whoops!') }
 
-  it { expect(failure).to be_a described_class }
-  it { expect(failure).to be_failed }
-  it { expect(failure).not_to be_successful }
-  it { expect(failure.error).to eq('Whoops!') }
-  it { expect(failure.type).to eq(nil) }
-  it { expect(failure.value).to eq(nil) }
-  it { expect { failure.value! }.to raise_error FService::Result::Error }
+    it { expect(failure).to be_a described_class }
+    it { expect(failure).to be_failed }
+    it { expect(failure).not_to be_successful }
+    it { expect(failure.error).to eq('Whoops!') }
+    it { expect(failure.type).to eq(nil) }
+    it { expect(failure.value).to eq(nil) }
+    it { expect { failure.value! }.to raise_error FService::Result::Error }
 
-  context 'when defining a type' do
-    subject(:failure) { described_class.new('Whoops!', :error) }
+    context 'when defining a type' do
+      subject(:failure) { described_class.new('Whoops!', :error) }
 
-    it { expect(failure.type).to eq(:error) }
+      it { expect(failure.type).to eq(:error) }
+    end
   end
 
   describe '#on_failure' do
@@ -133,6 +135,8 @@ RSpec.describe FService::Result::Failure do
   end
 
   describe '#to_s' do
+    subject(:failure) { described_class.new('Whoops!') }
+
     it { expect(failure.to_s).to eq 'Failure("Whoops!")' }
   end
 end
