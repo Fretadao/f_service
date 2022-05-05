@@ -19,8 +19,9 @@ RSpec::Matchers.define :have_failed_with do |expected|
     if actual.is_a?(FService::Result::Failure)
       message = "expected failure's type '#{actual.type.inspect}' to be equal '#{expected.inspect}'"
       if defined?(@expected_error)
+        has_description = @expected_error.respond_to?(:description)
         message += " and error '#{actual.error.inspect}' to be "
-        message += @expected_error.respond_to?(:description) ? @expected_error.description : "equal '#{@expected_error.inspect}'"
+        message += has_description ? @expected_error.description : "equal '#{@expected_error.inspect}'"
       end
 
       message
@@ -47,8 +48,9 @@ RSpec::Matchers.define :have_succeed_with do |expected|
     if actual.is_a?(FService::Result::Success)
       message = "expected success's type '#{actual.type.inspect}' to be equal '#{expected.inspect}'"
       if defined?(@expected_value)
+        has_description = @expected_value.respond_to?(:description)
         message += " and value '#{actual.value.inspect}' to be "
-        message += @expected_value.respond_to?(:description) ? @expected_value.description : "equal '#{@expected_value.inspect}'"
+        message += has_description ? @expected_value.description : "equal '#{@expected_value.inspect}'"
       end
 
       message
