@@ -266,7 +266,7 @@ To make available in the system, in the file 'spec/spec_helper.rb' or 'spec/rail
 add the folowing require:
 
 ```rb
-require 'f_service/spec'
+require 'f_service/rspec'
 ```
 
 ### Mocking a result
