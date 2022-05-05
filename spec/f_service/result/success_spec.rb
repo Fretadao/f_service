@@ -3,20 +3,22 @@
 require 'spec_helper'
 
 RSpec.describe FService::Result::Success do
-  subject(:success) { described_class.new('Yay!') }
+  describe 'initialize' do
+    subject(:success) { described_class.new('Yay!') }
 
-  it { expect(success).to be_a described_class }
-  it { expect(success).to be_successful }
-  it { expect(success).not_to be_failed }
-  it { expect(success.value).to eq('Yay!') }
-  it { expect(success.type).to eq(nil) }
-  it { expect(success.error).to eq(nil) }
-  it { expect(success.value!).to eq('Yay!') }
+    it { expect(success).to be_a described_class }
+    it { expect(success).to be_successful }
+    it { expect(success).not_to be_failed }
+    it { expect(success.value).to eq('Yay!') }
+    it { expect(success.type).to eq(nil) }
+    it { expect(success.error).to eq(nil) }
+    it { expect(success.value!).to eq('Yay!') }
 
-  context 'when defining a type' do
-    subject(:success) { described_class.new('Yay!', :ok) }
+    context 'when defining a type' do
+      subject(:success) { described_class.new('Yay!', :ok) }
 
-    it { expect(success.type).to eq(:ok) }
+      it { expect(success.type).to eq(:ok) }
+    end
   end
 
   describe '#on_success' do
@@ -132,6 +134,8 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#to_s' do
+    subject(:success) { described_class.new('Yay!') }
+
     it { expect(success.to_s).to eq 'Success("Yay!")' }
   end
 end
