@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- ### Removed -->
 ---
 
+### Added
+
+- Rspec Helper mock_service;
+- Rspec Matcher have_succeed_with and have_failed_with
+
 ## 0.2.0
 ### Added
 - Add `and_then` as alias for `then` (partially fix [#23](https://github.com/Fretadao/f_service/issues/23)).

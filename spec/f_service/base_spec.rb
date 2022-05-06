@@ -30,11 +30,13 @@ RSpec.describe FService::Base do
   end
 
   describe '#Check' do
-    subject(:response) { described_class.new.Check(:math_works) { 1 < 2 } }
+    context 'when block evaluates to true' do
+      subject(:response) { described_class.new.Check(:math_works) { 1 < 2 } }
 
-    it { expect(response).to be_successful }
-    it { expect(response.type).to eq(:math_works) }
-    it { expect(response.value!).to eq(true) }
+      it { expect(response).to be_successful }
+      it { expect(response.type).to eq(:math_works) }
+      it { expect(response.value!).to eq(true) }
+    end
 
     context 'when block evaluates to false' do
       subject(:response) { described_class.new.Check(:math_works) { 1 > 2 } }

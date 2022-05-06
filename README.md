@@ -257,6 +257,55 @@ IHateEvenNumbers.call
 # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
 ```
 
+## Testing
+
+We provide some helpers and matchers to make ease to test code envolving Fservice services.
+
+To make available in the system, in the file 'spec/spec_helper.rb' or 'spec/rails_helper.rb'
+
+add the folowing require:
+
+```rb
+require 'f_service/rspec'
+```
+
+### Mocking a result
+
+```
+mock_service(Uer::Create)
+# => Mocks a successful result with all values nil
+
+mock_service(Uer::Create, result: :success)
+# => Mocks a successful result with all values nil
+
+mock_service(Uer::Create, result: :success, type: :created)
+# => Mocks a successful result with type created
+
+mock_service(Uer::Create, result: :success, type: :created, value: instance_spy(User))
+# => Mocks a successful result with type created and a value
+
+mock_service(Uer::Create, result: :failure)
+# => Mocs a failure with all nil values
+
+mock_service(Uer::Create, result: :failure, type: :invalid_attributes)
+# => Mocs a failure with a failure type
+
+mock_service(Uer::Create, result: :failure, type: :invalid_attributes, value: { name: ["can't be blank"] })
+# => Mocs a failure with a failure type and an error value
+```
+
+### Matching a result
+
+```rb
+expect(User::Create.(name: 'Joe')).to have_succeed_with(:created)
+
+expect(User::Create.(name: 'Joe')).to have_succeed_with(:created).and_value(an_instance_of(User))
+
+expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes)
+
+expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes).and_error({ name: ["can't be blank"] })
+```
+
 ## API Docs
 
 You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
