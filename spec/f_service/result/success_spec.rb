@@ -116,8 +116,36 @@ RSpec.describe FService::Result::Success do
   describe '#and_then' do
     subject(:success) { described_class.new('Pax', :ok) }
 
-    it 'returns the given block result' do
-      expect(success.and_then { |value| "Hello, #{value}!" }).to eq('Hello, Pax!')
+    context 'when a block is given' do
+      it 'returns the given block result' do
+        expect(success.and_then { |value| "Hello, #{value}!" }).to eq('Hello, Pax!')
+      end
+    end
+
+    context 'when a block is passed as argument' do
+      it 'returns the given block argument' do
+        block = ->(value, _type) { "Hello, #{value}!" }
+
+        expect(success.and_then(&block)).to eq('Hello, Pax!')
+      end
+    end
+  end
+
+  describe '#then' do
+    subject(:success) { described_class.new('Pax', :ok) }
+
+    context 'when a block is given' do
+      it 'returns the given block result' do
+        expect(success.then { |value| "Hello, #{value}!" }).to eq('Hello, Pax!')
+      end
+    end
+
+    context 'when a block is passed as argument' do
+      it 'returns the given block argument' do
+        block = ->(value, _type) { "Hello, #{value}!" }
+
+        expect(success.then(&block)).to eq('Hello, Pax!')
+      end
     end
   end
 

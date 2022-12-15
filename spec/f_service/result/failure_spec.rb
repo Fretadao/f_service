@@ -125,12 +125,32 @@ RSpec.describe FService::Result::Failure do
   describe '#and_then' do
     subject(:failure) { described_class.new('Pax', :ok) }
 
-    it 'does not yields the block' do
-      expect { |block| failure.and_then(&block) }.not_to yield_control
+    context 'when a block is given' do
+      it 'returns itself' do
+        expect(failure.and_then { 'an error happened' }).to eq(failure)
+      end
     end
 
-    it 'returns itself' do
-      expect(failure.and_then { 'an error happened' }).to eq(failure)
+    context 'when a block is passed as argument' do
+      it 'does not yields the block' do
+        expect { |block| failure.and_then(&block) }.not_to yield_control
+      end
+    end
+  end
+
+  describe '#then' do
+    subject(:failure) { described_class.new('Pax', :ok) }
+
+    context 'when a block is given' do
+      it 'returns itself' do
+        expect(failure.then { 'an error happened' }).to eq(failure)
+      end
+    end
+
+    context 'when a block is passed as argument' do
+      it 'does not yields the block' do
+        expect { |block| failure.then(&block) }.not_to yield_control
+      end
     end
   end
 
