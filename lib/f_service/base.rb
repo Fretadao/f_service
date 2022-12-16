@@ -101,7 +101,8 @@ module FService
     def success(data = nil)
       FService.deprecate!(
         name: "#{self.class}##{__method__}",
-        alternative: '#Success'
+        alternative: '#Success',
+        from: caller[0]
       )
 
       Result::Success.new(data)
@@ -250,7 +251,8 @@ module FService
     def failure(data = nil)
       FService.deprecate!(
         name: "#{self.class}##{__method__}",
-        alternative: '#Failure'
+        alternative: '#Failure',
+        from: caller[0]
       )
 
       Result::Failure.new(data)
@@ -283,7 +285,8 @@ module FService
     def result(condition, data = nil)
       FService.deprecate!(
         name: "#{self.class}##{__method__}",
-        alternative: '#Check'
+        alternative: '#Check',
+        from: caller[0]
       )
 
       condition ? success(data) : failure(data)
