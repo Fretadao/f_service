@@ -67,8 +67,8 @@ class User::Create < FService::Base
     return Failure(:no_name) if @name.nil?
 
     user = UserRepository.create(name: @name)
-    if user.valid?
-      Success(:created, data: user)
+    if user.save
+      Success(:success, :created, data: user)
     else
       Failure(:creation_failed, data: user.errors)
     end
@@ -229,7 +229,7 @@ You can use `Check` to converts a boolean to a Result, truthy values map to `Suc
 
 ```ruby
 Check(:math_works) { 1 < 2 }
-# => #<Success @value=true, @type=:math_works>
+# => #<Success @value=true, @types=[:math_works]>
 
 Check(:math_works) { 1 > 2 }
 # => #<Failure @error=false, @type=:math_works>
@@ -251,7 +251,7 @@ class IHateEvenNumbers < FService::Base
 end
 
 IHateEvenNumbers.call
-# => #<Success @value=9, @type=:rand_int>
+# => #<Success @value=9, @types=[:rand_int]>
 
 IHateEvenNumbers.call
 # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>

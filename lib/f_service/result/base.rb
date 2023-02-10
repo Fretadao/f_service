@@ -16,6 +16,7 @@ module FService
       # You usually shouldn't call this directly. See {FService::Base#Failure} and {FService::Base#Success}.
       def initialize
         @handled = false
+        @matching_types = []
       end
 
       # This hook runs if the result is successful.
@@ -59,6 +60,7 @@ module FService
       # @api public
       def on_success(*target_types, unhandled: false)
         if successful? && unhandled? && expected_type?(target_types, unhandled: unhandled)
+          match_types(target_types)
           yield(*to_ary)
           @handled = true
           freeze
@@ -122,7 +124,7 @@ module FService
       def to_ary
         data = successful? ? value : error
 
-        [data, type]
+        [data, respond_to?(:type) ? type : @matching_types.first]
       end
 
       private
@@ -136,7 +138,21 @@ module FService
       end
 
       def expected_type?(target_types, unhandled:)
-        target_types.empty? || unhandled || target_types.include?(type)
+        if respond_to?(:type)
+          target_types.empty? || unhandled || target_types.include?(type)
+        else
+          target_types.empty? || unhandled || target_types.any? { |target_type| types.include?(target_type) }
+        end
+      end
+
+      def match_types(target_types)
+        @matching_types = if target_types.empty?
+                            []
+                          elsif respond_to?(:type)
+                            type
+                          else
+                            target_types & types
+                          end
       end
     end
   end

@@ -12,7 +12,7 @@ RSpec.describe FService::Base do
   describe '#Success' do
     subject(:response) { described_class.new.Success(:ok, data: 'yay!') }
 
-    it { expect(response.type).to eq(:ok) }
+    it { expect(response.types).to contain_exactly(:ok) }
     it { expect(response.value).to eq('yay!') }
   end
 
@@ -34,8 +34,8 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Check(:math_works) { 1 < 2 } }
 
       it { expect(response).to be_successful }
-      it { expect(response.type).to eq(:math_works) }
-      it { expect(response.value!).to eq(true) }
+      it { expect(response.types).to contain_exactly(:math_works) }
+      it { expect(response.value!).to be_truthy }
     end
 
     context 'when block evaluates to false' do
@@ -67,8 +67,8 @@ RSpec.describe FService::Base do
     subject(:response) { described_class.new.Try(:division) { 0 / 1 } }
 
     it { expect(response).to be_successful }
-    it { expect(response.type).to eq(:division) }
-    it { expect(response.value!).to eq(0) }
+    it { expect(response.types).to contain_exactly(:division) }
+    it { expect(response.value!).to be_zero }
 
     context 'when some exception is raised' do
       subject(:response) { described_class.new.Try(:division) { 1 / 0 } }
@@ -82,8 +82,8 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Try { 0 / 1 } }
 
       it { expect(response).to be_successful }
-      it { expect(response.type).to eq(nil) }
-      it { expect(response.value!).to eq 0 }
+      it { expect(response.types).to contain_exactly(nil) }
+      it { expect(response.value!).to be_zero }
     end
 
     context 'when raised exception does not match specified exception' do

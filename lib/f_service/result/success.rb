@@ -9,20 +9,20 @@ module FService
     #
     # @!attribute [r] value
     #   @return [Object] the provided value for the result
-    # @!attribute [r] type
-    #   @return [Object] the provided type for the result. Defaults to nil.
+    # @!attribute [r] types
+    #   @return [Object] the provided types for the result. Defaults to nil.
     # @api public
     class Success < Result::Base
-      attr_reader :value, :type
+      attr_reader :value, :types
 
       # Creates a successful operation.
       # You usually shouldn't call this directly. See {FService::Base#Success}.
       #
       # @param value [Object] success value.
-      def initialize(value, type = nil)
+      def initialize(value, types = [])
         super()
         @value = value
-        @type = type
+        @types = types
       end
 
       # Returns true.
@@ -79,7 +79,7 @@ module FService
       #   end
       #
       # @yieldparam value pass {#value} to a block
-      # @yieldparam type pass {#type} to a block
+      # @yieldparam types pass {#types} to a block
       def and_then
         yield(*to_ary)
       end

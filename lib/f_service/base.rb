@@ -109,30 +109,30 @@ module FService
     end
 
     # Returns a successful result.
-    # You can optionally specify a type and a value for your result.
+    # You can optionally specify a list of types and a value for your result.
     # You'll probably want to return this inside {#run}.
     #
     #
     # @example
     #   def run
     #     Success()
-    #     # => #<Success @value=nil, @type=nil>
+    #     # => #<Success @value=nil, @types=[]>
     #
     #     Success(:ok)
-    #     # => #<Success @value=nil, @type=:ok>
+    #     # => #<Success @value=nil, @types=[:ok]>
     #
     #     Success(data: 10)
-    #     # => #<Success @value=10, @type=nil>
+    #     # => #<Success @value=10, @types=[]>
     #
     #     Success(:ok, data: 10)
-    #     # => #<Success @value=10, @type=:ok>
+    #     # => #<Success @value=10, @type=[:ok]>
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param data the result value
     # @return [Result::Success] a successful result
-    def Success(type = nil, data: nil)
-      Result::Success.new(data, type)
+    def Success(*types, data: nil)
+      Result::Success.new(data, types)
     end
 
     # Returns a failed result.
