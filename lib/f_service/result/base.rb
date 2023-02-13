@@ -125,7 +125,7 @@ module FService
       def to_ary
         data = successful? ? value : error
 
-        [data, respond_to?(:type) ? type : @matching_types.first]
+        [data, @matching_types.first]
       end
 
       private
@@ -139,18 +139,12 @@ module FService
       end
 
       def expected_type?(target_types, unhandled:)
-        if respond_to?(:type)
-          target_types.empty? || unhandled || target_types.include?(type)
-        else
-          target_types.empty? || unhandled || target_types.any? { |target_type| types.include?(target_type) }
-        end
+        target_types.empty? || unhandled || target_types.any? { |target_type| types.include?(target_type) }
       end
 
       def match_types(target_types)
         @matching_types = if target_types.empty?
                             []
-                          elsif respond_to?(:type)
-                            type
                           else
                             target_types & types
                           end
