@@ -50,7 +50,7 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Check { 1 > 2 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.types).to contain_exactly(nil) }
+      it { expect(response.types).to be_empty }
       it { expect(response.error).to be_falsy }
     end
 
@@ -58,7 +58,7 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Check(data: 'that is an error') { 1 > 2 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.types).to contain_exactly(nil) }
+      it { expect(response.types).to be_empty }
       it { expect(response.error).to eq('that is an error') }
     end
   end

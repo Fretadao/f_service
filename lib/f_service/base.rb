@@ -164,7 +164,7 @@ module FService
 
     # Converts a boolean to a Result.
     # Truthy values map to Success, and falsey values map to Failures.
-    # You can optionally provide a type for the result.
+    # You can optionally provide a types for the result.
     # The result value defaults as the evaluated value of the given block.
     # If you want another value you can pass it through the `data:` argument.
     #
@@ -172,28 +172,28 @@ module FService
     #   class CheckMathWorks < FService::Base
     #     def run
     #       Check(:math_works) { 1 < 2 }
-    #       # => #<Success @value=true, @type=:math_works>
+    #       # => #<Success @value=true, @types=:math_works>
     #
     #       Check(:math_works) { 1 > 2 }
-    #       # => #<Failure @error=false, @type=:math_works>
+    #       # => #<Failure @error=false, @types=:math_works>
     #
     #       Check(:math_works, data: 1 + 2) { 1 > 2 }
-    #       # => #<Failure @type=:math_works, @error=3>
+    #       # => #<Failure @types=:math_works, @error=3>
     #     end
     #
     #       Check(:math_works, data: 1 + 2) { 1 < 2 }
-    #       # => #<Success @type=:math_works, @value=3>
+    #       # => #<Success @types=:math_works, @value=3>
     #     end
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @return [Result::Success, Result::Failure] a Result from the boolean expression
-    def Check(type = nil, data: nil)
+    def Check(*types, data: nil)
       res = yield
 
       final_data = data || res
 
-      res ? Success(type, data: final_data) : Failure(type, data: final_data)
+      res ? Success(*types, data: final_data) : Failure(*types, data: final_data)
     end
 
     # If the given block raises an exception, it wraps it in a Failure.
