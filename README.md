@@ -287,10 +287,10 @@ mock_service(Uer::Create, result: :success, types: :created, value: instance_spy
 mock_service(Uer::Create, result: :failure)
 # => Mocs a failure with all nil values
 
-mock_service(Uer::Create, result: :failure, type: [:unprocessable_entity, :client_error])
+mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error])
 # => Mocs a failure with a failure type
 
-mock_service(Uer::Create, result: :failure, type: [:unprocessable_entity, :client_error], value: { name: ["can't be blank"] })
+mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error], value: { name: ["can't be blank"] })
 # => Mocs a failure with a failure type and an error value
 ```
 
