@@ -110,6 +110,7 @@ module FService
       # @api public
       def on_failure(*target_types, unhandled: false)
         if failed? && unhandled? && expected_type?(target_types, unhandled: unhandled)
+          match_types(target_types)
           yield(*to_ary)
           @handled = true
           freeze

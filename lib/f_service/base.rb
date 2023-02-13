@@ -125,7 +125,7 @@ module FService
     #     # => #<Success @value=10, @types=[]>
     #
     #     Success(:ok, data: 10)
-    #     # => #<Success @value=10, @type=[:ok]>
+    #     # => #<Success @value=10, @types=[:ok]>
     #   end
     #
     # @param types the Result types
@@ -136,30 +136,30 @@ module FService
     end
 
     # Returns a failed result.
-    # You can optionally specify a type and a value for your result.
+    # You can optionally specify types and a value for your result.
     # You'll probably want to return this inside {#run}.
     #
     #
     # @example
     #   def run
     #     Failure()
-    #     # => #<Failure @error=nil, @type=nil>
+    #     # => #<Failure @error=nil, @types=nil>
     #
     #     Failure(:not_a_number)
-    #     # => #<Failure @error=nil, @type=:not_a_number>
+    #     # => #<Failure @error=nil, @types=:not_a_number>
     #
     #     Failure(data: "10")
-    #     # => #<Failure @error="10", @type=nil>
+    #     # => #<Failure @error="10", @types=nil>
     #
     #     Failure(:not_a_number, data: "10")
-    #     # => #<Failure @error="10", @type=:not_a_number>
+    #     # => #<Failure @error="10", @types=:not_a_number>
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param data the result value
     # @return [Result::Failure] a failed result
-    def Failure(type = nil, data: nil)
-      Result::Failure.new(data, type)
+    def Failure(*types, data: nil)
+      Result::Failure.new(data, types)
     end
 
     # Converts a boolean to a Result.

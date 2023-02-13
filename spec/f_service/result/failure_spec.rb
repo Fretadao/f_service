@@ -10,14 +10,14 @@ RSpec.describe FService::Result::Failure do
     it { expect(failure).to be_failed }
     it { expect(failure).not_to be_successful }
     it { expect(failure.error).to eq('Whoops!') }
-    it { expect(failure.type).to eq(nil) }
-    it { expect(failure.value).to eq(nil) }
+    it { expect(failure.types).to be_empty }
+    it { expect(failure.value).to be_nil }
     it { expect { failure.value! }.to raise_error FService::Result::Error }
 
-    context 'when defining a type' do
-      subject(:failure) { described_class.new('Whoops!', :error) }
+    context 'when defining a types' do
+      subject(:failure) { described_class.new('Whoops!', %i[error]) }
 
-      it { expect(failure.type).to eq(:error) }
+      it { expect(failure.types).to contain_exactly(:error) }
     end
   end
 
@@ -33,7 +33,7 @@ RSpec.describe FService::Result::Failure do
     end
 
     describe 'callback matching' do
-      context 'when no type is especified' do
+      context 'when no types are especified' do
         subject(:on_failure_callback) { failure.on_failure { |array| array << "That's no moon" } }
 
         let(:array) { [] }
@@ -46,7 +46,7 @@ RSpec.describe FService::Result::Failure do
         end
       end
 
-      context 'when type is especified' do
+      context 'when some types are especified' do
         subject(:on_failure_callback) do
           failure
             .on_failure(:error) { |array, type| array << type }
@@ -55,10 +55,10 @@ RSpec.describe FService::Result::Failure do
         end
 
         let(:array) { [] }
-        let(:failure) { described_class.new(array, type) }
+        let(:failure) { described_class.new(array, types) }
 
-        context 'and no type matches with error type' do
-          let(:type) { :unknown_error }
+        context 'and no types matches with error types' do
+          let(:types) { %i[unknown_error] }
 
           it 'evaluates the block wich matches without specifying error' do
             on_failure_callback
@@ -72,7 +72,7 @@ RSpec.describe FService::Result::Failure do
         end
 
         context 'and some type matches with error type' do
-          let(:type) { :error }
+          let(:types) { %i[error] }
 
           it 'freezes the result' do
             expect(on_failure_callback).to be_frozen
@@ -82,6 +82,46 @@ RSpec.describe FService::Result::Failure do
             on_failure_callback
 
             expect(array).to eq [:error]
+          end
+        end
+      end
+
+      context 'when multiple types are especified' do
+        subject(:on_failure_callback) do
+          failure
+            .on_failure(:unprocessable_entity) { |array, type| array << type }
+            .on_failure(:client_error) { |array| array << 3 }
+            .on_failure(unhandled: true) { |array| array << "That's no moon" }
+        end
+
+        let(:array) { [] }
+        let(:failure) { described_class.new(array, types) }
+
+        context 'and no types matches with error types' do
+          let(:types) { %i[unknown_error server_error] }
+
+          it 'evaluates the block wich matches without specifying error' do
+            on_failure_callback
+
+            expect(array).to eq ["That's no moon"]
+          end
+
+          it 'freezes the result' do
+            expect(on_failure_callback).to be_frozen
+          end
+        end
+
+        context 'and some type matches with error types' do
+          let(:types) { %i[not_found client_error] }
+
+          it 'freezes the result' do
+            expect(on_failure_callback).to be_frozen
+          end
+
+          it 'evaluates only the first given block on failure' do
+            on_failure_callback
+
+            expect(array).to eq [3]
           end
         end
       end

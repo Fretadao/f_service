@@ -25,7 +25,7 @@ RSpec.describe FService::Base do
   describe '#Failure' do
     subject(:response) { described_class.new.Failure(:error, data: 'Whoops!') }
 
-    it { expect(response.type).to eq(:error) }
+    it { expect(response.types).to contain_exactly(:error) }
     it { expect(response.error).to eq('Whoops!') }
   end
 
@@ -42,23 +42,23 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Check(:math_works) { 1 > 2 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.type).to eq(:math_works) }
-      it { expect(response.error).to eq(false) }
+      it { expect(response.types).to contain_exactly(:math_works) }
+      it { expect(response.error).to be_falsy }
     end
 
     context 'when type is not specified' do
       subject(:response) { described_class.new.Check { 1 > 2 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.type).to eq(nil) }
-      it { expect(response.error).to eq(false) }
+      it { expect(response.types).to contain_exactly(nil) }
+      it { expect(response.error).to be_falsy }
     end
 
     context 'when data is passed' do
       subject(:response) { described_class.new.Check(data: 'that is an error') { 1 > 2 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.type).to eq(nil) }
+      it { expect(response.types).to contain_exactly(nil) }
       it { expect(response.error).to eq('that is an error') }
     end
   end
@@ -74,7 +74,7 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Try(:division) { 1 / 0 } }
 
       it { expect(response).to be_failed }
-      it { expect(response.type).to eq(:division) }
+      it { expect(response.types).to contain_exactly(:division) }
       it { expect(response.error).to be_a ZeroDivisionError }
     end
 
