@@ -33,6 +33,7 @@ end
 
 RSpec::Matchers.define :have_succeed_with do |*expected_types|
   match do |actual|
+    binding.pry
     matched = actual.is_a?(FService::Result::Success) && actual.types == expected_types
 
     matched &&= values_match?(@expected_value, actual.value) if defined?(@expected_value)
