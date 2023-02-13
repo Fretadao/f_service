@@ -2,9 +2,9 @@
 
 require 'rspec/expectations'
 
-RSpec::Matchers.define :have_failed_with do |expected|
+RSpec::Matchers.define :have_failed_with do |*expected_types|
   match do |actual|
-    matched = actual.is_a?(FService::Result::Failure) && actual.type == expected
+    matched = actual.is_a?(FService::Result::Failure) && actual.types == expected_types
 
     matched &&= actual.error == @expected_error if defined?(@expected_error)
 
@@ -17,7 +17,7 @@ RSpec::Matchers.define :have_failed_with do |expected|
 
   failure_message do |actual|
     if actual.is_a?(FService::Result::Failure)
-      message = "expected failure's type '#{actual.type.inspect}' to be equal '#{expected.inspect}'"
+      message = "expected failure's types '#{actual.types.inspect}' to be equal '#{expected_types.inspect}'"
       if defined?(@expected_error)
         has_description = @expected_error.respond_to?(:description)
         message += " and error '#{actual.error.inspect}' to be "
@@ -31,9 +31,9 @@ RSpec::Matchers.define :have_failed_with do |expected|
   end
 end
 
-RSpec::Matchers.define :have_succeed_with do |expected|
+RSpec::Matchers.define :have_succeed_with do |*expected_types|
   match do |actual|
-    matched = actual.is_a?(FService::Result::Success) && actual.type == expected
+    matched = actual.is_a?(FService::Result::Success) && actual.types == expected_types
 
     matched &&= values_match?(@expected_value, actual.value) if defined?(@expected_value)
 
@@ -46,7 +46,7 @@ RSpec::Matchers.define :have_succeed_with do |expected|
 
   failure_message do |actual|
     if actual.is_a?(FService::Result::Success)
-      message = "expected success's type '#{actual.type.inspect}' to be equal '#{expected.inspect}'"
+      message = "expected success's types '#{actual.types.inspect}' to be equal '#{expected_types.inspect}'"
       if defined?(@expected_value)
         has_description = @expected_value.respond_to?(:description)
         message += " and value '#{actual.value.inspect}' to be "
