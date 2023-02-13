@@ -143,16 +143,16 @@ module FService
     # @example
     #   def run
     #     Failure()
-    #     # => #<Failure @error=nil, @types=nil>
+    #     # => #<Failure @error=nil, @types=[]>
     #
     #     Failure(:not_a_number)
-    #     # => #<Failure @error=nil, @types=:not_a_number>
+    #     # => #<Failure @error=nil, @types=[:not_a_number]>
     #
     #     Failure(data: "10")
-    #     # => #<Failure @error="10", @types=nil>
+    #     # => #<Failure @error="10", @types=[]>
     #
     #     Failure(:not_a_number, data: "10")
-    #     # => #<Failure @error="10", @types=:not_a_number>
+    #     # => #<Failure @error="10", @types=[:not_a_number]>
     #   end
     #
     # @param types the Result types
@@ -172,17 +172,17 @@ module FService
     #   class CheckMathWorks < FService::Base
     #     def run
     #       Check(:math_works) { 1 < 2 }
-    #       # => #<Success @value=true, @types=:math_works>
+    #       # => #<Success @value=true, @types=[:math_works]>
     #
     #       Check(:math_works) { 1 > 2 }
-    #       # => #<Failure @error=false, @types=:math_works>
+    #       # => #<Failure @error=false, @types=[:math_works]>
     #
     #       Check(:math_works, data: 1 + 2) { 1 > 2 }
     #       # => #<Failure @types=:math_works, @error=3>
     #     end
     #
     #       Check(:math_works, data: 1 + 2) { 1 < 2 }
-    #       # => #<Success @types=:math_works, @value=3>
+    #       # => #<Success @types=[:math_works], @value=3>
     #     end
     #   end
     #
@@ -199,7 +199,7 @@ module FService
     # If the given block raises an exception, it wraps it in a Failure.
     # Otherwise, maps the block value in a Success object.
     # You can specify which exceptions to watch for.
-    # It's possible to provide a type for the result too.
+    # It's possible to provide a types for the result too.
     #
     # @example
     #   class IHateEvenNumbers < FService::Base
@@ -214,20 +214,20 @@ module FService
     #   end
     #
     #   IHateEvenNumbers.call
-    #   # => #<Success @value=9, @type=:rand_int>
+    #   # => #<Success @value=9, @types=[:rand_int]>
     #
     #   IHateEvenNumbers.call
-    #   # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+    #   # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:rand_int]>
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param catch the exception list to catch
     # @return [Result::Success, Result::Failure] a result from the boolean expression
-    def Try(type = nil, catch: StandardError)
+    def Try(*types, catch: StandardError)
       res = yield
 
-      Success(type, data: res)
+      Success(*types, data: res)
     rescue *catch => e
-      Failure(type, data: e)
+      Failure(*types, data: e)
     end
 
     # Returns a failed operation.

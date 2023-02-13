@@ -82,7 +82,7 @@ RSpec.describe FService::Base do
       subject(:response) { described_class.new.Try { 0 / 1 } }
 
       it { expect(response).to be_successful }
-      it { expect(response.types).to contain_exactly(nil) }
+      it { expect(response.types).to be_blank }
       it { expect(response.value!).to be_zero }
     end
 
