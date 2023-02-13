@@ -5,9 +5,9 @@ module FServiceResultHelpers
   # Create an Fservice result Success or Failure.
   def f_service_result(result, value = nil, types = [])
     if result == :success
-      FService::Result::Success.new(value, *Array(types))
+      FService::Result::Success.new(value, Array(types))
     else
-      FService::Result::Failure.new(value, *Array(types))
+      FService::Result::Failure.new(value, Array(types))
     end
   end
 
