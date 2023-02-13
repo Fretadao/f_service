@@ -58,13 +58,13 @@ end
 
 The next step is writing the `#run` method, which is where the work should be done.
 Use the methods `#Success` and `#Failure` to handle your return values.
-You can optionally specify a type and a value for your result.
+You can optionally specify a list of types which represents that result and a value for your result.
 
 ```ruby
 class User::Create < FService::Base
   # ...
   def run
-    return Failure(:no_name) if @name.nil?
+    return Failure(:no_name, :invalid_attribute) if @name.nil?
 
     user = UserRepository.create(name: @name)
     if user.save
@@ -232,7 +232,7 @@ Check(:math_works) { 1 < 2 }
 # => #<Success @value=true, @types=[:math_works]>
 
 Check(:math_works) { 1 > 2 }
-# => #<Failure @error=false, @type=:math_works>
+# => #<Failure @error=false, @types=[:math_works]>
 ```
 
 `Try` transforms an exception into a `Failure` if some exception is raised for the given block. You can specify which exception class to watch for
@@ -254,7 +254,7 @@ IHateEvenNumbers.call
 # => #<Success @value=9, @types=[:rand_int]>
 
 IHateEvenNumbers.call
-# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:rand_int]>
 ```
 
 ## Testing
