@@ -143,11 +143,7 @@ module FService
       end
 
       def match_types(target_types)
-        @matching_types = if target_types.empty?
-                            []
-                          else
-                            target_types & types
-                          end
+        @matching_types = target_types.empty? ? types : target_types & types
       end
     end
   end

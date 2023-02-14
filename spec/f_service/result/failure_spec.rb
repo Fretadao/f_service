@@ -25,7 +25,7 @@ RSpec.describe FService::Result::Failure do
     describe 'return' do
       subject(:on_failure_callback) { failure.on_failure(unhandled: true) { 'some recovering' } }
 
-      let(:failure) { described_class.new([], :error) }
+      let(:failure) { described_class.new([], [:error]) }
 
       it 'returns itself' do
         expect(on_failure_callback).to eq failure
@@ -37,7 +37,7 @@ RSpec.describe FService::Result::Failure do
         subject(:on_failure_callback) { failure.on_failure { |array| array << "That's no moon" } }
 
         let(:array) { [] }
-        let(:failure) { described_class.new(array, :error) }
+        let(:failure) { described_class.new(array, [:error]) }
 
         before { allow(FService).to receive(:deprecate!) }
 
