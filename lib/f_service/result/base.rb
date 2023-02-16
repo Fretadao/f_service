@@ -19,6 +19,13 @@ module FService
         @matching_types = []
       end
 
+      # Implements old attribute type. Its deprecated in favor of using types.
+      def type
+        FService.deprecate!(name: "#{self.class}##{__method__}", alternative: '#types', from: caller[0])
+
+        Array(@matching_types).first
+      end
+
       # This hook runs if the result is successful.
       # Can receive one or more types to be checked before running the given block.
       #
