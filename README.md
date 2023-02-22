@@ -58,17 +58,17 @@ end
 
 The next step is writing the `#run` method, which is where the work should be done.
 Use the methods `#Success` and `#Failure` to handle your return values.
-You can optionally specify a type and a value for your result.
+You can optionally specify a list of types which represents that result and a value for your result.
 
 ```ruby
 class User::Create < FService::Base
   # ...
   def run
-    return Failure(:no_name) if @name.nil?
+    return Failure(:no_name, :invalid_attribute) if @name.nil?
 
     user = UserRepository.create(name: @name)
-    if user.valid?
-      Success(:created, data: user)
+    if user.save
+      Success(:success, :created, data: user)
     else
       Failure(:creation_failed, data: user.errors)
     end
@@ -189,6 +189,12 @@ class UsersController < BaseController
 end
 ```
 
+### Types precedence
+
+FService matches types from left to right, from more specific to more generic.
+Example (:unprocessable_entity, :client_error, :http_response)
+Then, result will match first :unprocessable_entity, after :client_error, after :http_response, then not matched.
+
 ### Chaining services
 
 Since all services return Results, you can chain service calls making a data pipeline.
@@ -229,10 +235,10 @@ You can use `Check` to converts a boolean to a Result, truthy values map to `Suc
 
 ```ruby
 Check(:math_works) { 1 < 2 }
-# => #<Success @value=true, @type=:math_works>
+# => #<Success @value=true, @types=[:math_works]>
 
 Check(:math_works) { 1 > 2 }
-# => #<Failure @error=false, @type=:math_works>
+# => #<Failure @error=false, @types=[:math_works]>
 ```
 
 `Try` transforms an exception into a `Failure` if some exception is raised for the given block. You can specify which exception class to watch for
@@ -251,10 +257,10 @@ class IHateEvenNumbers < FService::Base
 end
 
 IHateEvenNumbers.call
-# => #<Success @value=9, @type=:rand_int>
+# => #<Success @value=9, @types=[:rand_int]>
 
 IHateEvenNumbers.call
-# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:rand_int]>
 ```
 
 ## Testing
@@ -278,19 +284,19 @@ mock_service(Uer::Create)
 mock_service(Uer::Create, result: :success)
 # => Mocks a successful result with all values nil
 
-mock_service(Uer::Create, result: :success, type: :created)
+mock_service(Uer::Create, result: :success, types: [:created, :success])
 # => Mocks a successful result with type created
 
-mock_service(Uer::Create, result: :success, type: :created, value: instance_spy(User))
+mock_service(Uer::Create, result: :success, types: :created, value: instance_spy(User))
 # => Mocks a successful result with type created and a value
 
 mock_service(Uer::Create, result: :failure)
 # => Mocs a failure with all nil values
 
-mock_service(Uer::Create, result: :failure, type: :invalid_attributes)
+mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error])
 # => Mocs a failure with a failure type
 
-mock_service(Uer::Create, result: :failure, type: :invalid_attributes, value: { name: ["can't be blank"] })
+mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error], value: { name: ["can't be blank"] })
 # => Mocs a failure with a failure type and an error value
 ```
 

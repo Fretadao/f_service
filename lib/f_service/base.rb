@@ -109,62 +109,62 @@ module FService
     end
 
     # Returns a successful result.
-    # You can optionally specify a type and a value for your result.
+    # You can optionally specify a list of types and a value for your result.
     # You'll probably want to return this inside {#run}.
     #
     #
     # @example
     #   def run
     #     Success()
-    #     # => #<Success @value=nil, @type=nil>
+    #     # => #<Success @value=nil, @types=[]>
     #
     #     Success(:ok)
-    #     # => #<Success @value=nil, @type=:ok>
+    #     # => #<Success @value=nil, @types=[:ok]>
     #
     #     Success(data: 10)
-    #     # => #<Success @value=10, @type=nil>
+    #     # => #<Success @value=10, @types=[]>
     #
     #     Success(:ok, data: 10)
-    #     # => #<Success @value=10, @type=:ok>
+    #     # => #<Success @value=10, @types=[:ok]>
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param data the result value
     # @return [Result::Success] a successful result
-    def Success(type = nil, data: nil)
-      Result::Success.new(data, type)
+    def Success(*types, data: nil)
+      Result::Success.new(data, types)
     end
 
     # Returns a failed result.
-    # You can optionally specify a type and a value for your result.
+    # You can optionally specify types and a value for your result.
     # You'll probably want to return this inside {#run}.
     #
     #
     # @example
     #   def run
     #     Failure()
-    #     # => #<Failure @error=nil, @type=nil>
+    #     # => #<Failure @error=nil, @types=[]>
     #
     #     Failure(:not_a_number)
-    #     # => #<Failure @error=nil, @type=:not_a_number>
+    #     # => #<Failure @error=nil, @types=[:not_a_number]>
     #
     #     Failure(data: "10")
-    #     # => #<Failure @error="10", @type=nil>
+    #     # => #<Failure @error="10", @types=[]>
     #
     #     Failure(:not_a_number, data: "10")
-    #     # => #<Failure @error="10", @type=:not_a_number>
+    #     # => #<Failure @error="10", @types=[:not_a_number]>
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param data the result value
     # @return [Result::Failure] a failed result
-    def Failure(type = nil, data: nil)
-      Result::Failure.new(data, type)
+    def Failure(*types, data: nil)
+      Result::Failure.new(data, types)
     end
 
     # Converts a boolean to a Result.
     # Truthy values map to Success, and falsey values map to Failures.
-    # You can optionally provide a type for the result.
+    # You can optionally provide a types for the result.
     # The result value defaults as the evaluated value of the given block.
     # If you want another value you can pass it through the `data:` argument.
     #
@@ -172,34 +172,34 @@ module FService
     #   class CheckMathWorks < FService::Base
     #     def run
     #       Check(:math_works) { 1 < 2 }
-    #       # => #<Success @value=true, @type=:math_works>
+    #       # => #<Success @value=true, @types=[:math_works]>
     #
     #       Check(:math_works) { 1 > 2 }
-    #       # => #<Failure @error=false, @type=:math_works>
+    #       # => #<Failure @error=false, @types=[:math_works]>
     #
     #       Check(:math_works, data: 1 + 2) { 1 > 2 }
-    #       # => #<Failure @type=:math_works, @error=3>
+    #       # => #<Failure @types=:math_works, @error=3>
     #     end
     #
     #       Check(:math_works, data: 1 + 2) { 1 < 2 }
-    #       # => #<Success @type=:math_works, @value=3>
+    #       # => #<Success @types=[:math_works], @value=3>
     #     end
     #   end
     #
-    # @param type the Result type
+    # @param types the Result types
     # @return [Result::Success, Result::Failure] a Result from the boolean expression
-    def Check(type = nil, data: nil)
+    def Check(*types, data: nil)
       res = yield
 
       final_data = data || res
 
-      res ? Success(type, data: final_data) : Failure(type, data: final_data)
+      res ? Success(*types, data: final_data) : Failure(*types, data: final_data)
     end
 
     # If the given block raises an exception, it wraps it in a Failure.
     # Otherwise, maps the block value in a Success object.
     # You can specify which exceptions to watch for.
-    # It's possible to provide a type for the result too.
+    # It's possible to provide a types for the result too.
     #
     # @example
     #   class IHateEvenNumbers < FService::Base
@@ -214,20 +214,20 @@ module FService
     #   end
     #
     #   IHateEvenNumbers.call
-    #   # => #<Success @value=9, @type=:rand_int>
+    #   # => #<Success @value=9, @types=[:rand_int]>
     #
     #   IHateEvenNumbers.call
-    #   # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @type=:rand_int>
+    #   # => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:rand_int]>
     #
-    # @param type the Result type
+    # @param types the Result types
     # @param catch the exception list to catch
     # @return [Result::Success, Result::Failure] a result from the boolean expression
-    def Try(type = nil, catch: StandardError)
+    def Try(*types, catch: StandardError)
       res = yield
 
-      Success(type, data: res)
+      Success(*types, data: res)
     rescue *catch => e
-      Failure(type, data: e)
+      Failure(*types, data: e)
     end
 
     # Returns a failed operation.

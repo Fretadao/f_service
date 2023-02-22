@@ -10,14 +10,14 @@ RSpec.describe FService::Result::Success do
     it { expect(success).to be_successful }
     it { expect(success).not_to be_failed }
     it { expect(success.value).to eq('Yay!') }
-    it { expect(success.type).to eq(nil) }
-    it { expect(success.error).to eq(nil) }
+    it { expect(success.types).to be_empty }
+    it { expect(success.error).to be_nil }
     it { expect(success.value!).to eq('Yay!') }
 
-    context 'when defining a type' do
-      subject(:success) { described_class.new('Yay!', :ok) }
+    context 'when defining types' do
+      subject(:success) { described_class.new('Yay!', %i[ok success]) }
 
-      it { expect(success.type).to eq(:ok) }
+      it { expect(success.types).to contain_exactly(:ok, :success) }
     end
   end
 
@@ -25,7 +25,7 @@ RSpec.describe FService::Result::Success do
     describe 'return' do
       subject(:on_success_callback) { success.on_success(unhandled: true) { 'some recovering' } }
 
-      let(:success) { described_class.new([], :ok) }
+      let(:success) { described_class.new([], [:ok]) }
 
       it 'returns itself' do
         expect(on_success_callback).to eq success
@@ -37,7 +37,7 @@ RSpec.describe FService::Result::Success do
         subject(:on_success_callback) { success.on_success { |array| array << 'It works!' } }
 
         let(:array) { [] }
-        let(:success) { described_class.new(array, :error) }
+        let(:success) { described_class.new(array, [:error]) }
 
         before { allow(FService).to receive(:deprecate!) }
 
@@ -54,7 +54,7 @@ RSpec.describe FService::Result::Success do
         end
 
         let(:array) { [] }
-        let(:success) { described_class.new(array, type) }
+        let(:success) { described_class.new(array, [type]) }
 
         context 'and no type matches with success type' do
           let(:type) { :unknow_success }
@@ -84,6 +84,45 @@ RSpec.describe FService::Result::Success do
           end
         end
       end
+
+      context 'when multiple types are specified' do
+        subject(:on_success_callback) do
+          success.on_success(:ok, :second_ok) { |value, type| value << type }
+                 .on_success(:still_ok) { |value| value << 3 }
+                 .on_success(unhandled: true) { |value| value << 'one more time' }
+        end
+
+        let(:array) { [] }
+        let(:success) { described_class.new(array, types) }
+
+        context 'and no type matches with success type' do
+          let(:types) { [:unknow_success] }
+
+          it 'freezes the result' do
+            expect(on_success_callback).to be_frozen
+          end
+
+          it 'evaluates the block wich matches without specifying success' do
+            on_success_callback
+
+            expect(array).to eq ['one more time']
+          end
+        end
+
+        context 'and first type matches with success type' do
+          let(:types) { %i[first_ok second_ok] }
+
+          it 'freezes the result' do
+            expect(on_success_callback).to be_frozen
+          end
+
+          it 'evaluates only the first given block on failure' do
+            on_success_callback
+
+            expect(array).to eq [:second_ok]
+          end
+        end
+      end
     end
   end
 
@@ -96,7 +135,7 @@ RSpec.describe FService::Result::Success do
     end
 
     let(:array) { [] }
-    let(:success) { described_class.new(array, :ok) }
+    let(:success) { described_class.new(array, [:ok]) }
 
     it 'returns itself' do
       expect(on_failure_callback).to eq success
@@ -114,7 +153,7 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#and_then' do
-    subject(:success) { described_class.new('Pax', :ok) }
+    subject(:success) { described_class.new('Pax', [:ok]) }
 
     context 'when a block is given' do
       it 'returns the given block result' do
@@ -132,7 +171,7 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#then' do
-    subject(:success) { described_class.new('Pax', :ok) }
+    subject(:success) { described_class.new('Pax', [:ok]) }
 
     before { allow(FService).to receive(:deprecate!) }
 
@@ -154,7 +193,7 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#or_else' do
-    subject(:success) { described_class.new('Pax', :ok) }
+    subject(:success) { described_class.new('Pax', [:ok]) }
 
     it 'does not yields the block' do
       expect { |block| success.or_else(&block) }.not_to yield_control
@@ -166,8 +205,18 @@ RSpec.describe FService::Result::Success do
   end
 
   describe '#to_s' do
-    subject(:success) { described_class.new('Yay!') }
+    subject(:success) { described_class.new(value) }
 
-    it { expect(success.to_s).to eq 'Success("Yay!")' }
+    context 'when result does not have a value' do
+      let(:value) { nil }
+
+      it { expect(success.to_s).to eq 'Success()' }
+    end
+
+    context 'when result has a value' do
+      let(:value) { 'Yay!' }
+
+      it { expect(success.to_s).to eq 'Success("Yay!")' }
+    end
   end
 end

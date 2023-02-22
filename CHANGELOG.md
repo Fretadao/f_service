@@ -11,9 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ### Added
-
-- Rspec Helper mock_service;
-- Rspec Matcher have_succeed_with and have_failed_with
+- Add Rspec Helper mock_service;
+- Add Rspec Matcher have_succeed_with and have_failed_with;
+- Add `Success()`, `Failure()`, `Check()`, `Try()` now can be multipe types;
+- Changed depreacate `Result#type` method.
 
 ## 0.2.0
 ### Added
