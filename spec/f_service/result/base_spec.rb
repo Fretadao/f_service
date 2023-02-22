@@ -18,19 +18,37 @@ RSpec.describe FService::Result::Base do
   end
 
   describe '#type' do
-    let(:test_class) do
-      Class.new(described_class) do
-        def initialize
-          @matching_types = %i[ok success]
+    before { allow(FService).to receive(:deprecate!) }
+
+    context 'when types has just one type' do
+      let(:test_class) do
+        Class.new(described_class) do
+          def initialize
+            @types = %i[success]
+          end
         end
+      end
+
+      it 'deprecates this method', :aggregate_failures do
+        expect(test_class.new.type).to eq(:success)
+        expect(FService).to have_received(:deprecate!)
       end
     end
 
-    before { allow(FService).to receive(:deprecate!) }
+    context 'when types has multiple values' do
+      let(:test_class) do
+        Class.new(described_class) do
+          def initialize
+            @types = %i[ok success http_response]
+            @matching_types = %i[ok success]
+          end
+        end
+      end
 
-    it 'deprecates this method', :aggregate_failures do
-      expect(test_class.new.type).to eq(:ok)
-      expect(FService).to have_received(:deprecate!)
+      it 'deprecates this method', :aggregate_failures do
+        expect(test_class.new.type).to eq(:ok)
+        expect(FService).to have_received(:deprecate!)
+      end
     end
   end
 end

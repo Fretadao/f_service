@@ -14,16 +14,15 @@ module FService
     #   @return [Object] the provided types for the result. Defaults to nil.
     # @api public
     class Failure < Result::Base
-      attr_reader :error, :types
+      attr_reader :error
 
       # Creates a failed operation.
       # You usually shouldn't call this directly. See {FService::Base#Failure}.
       #
       # @param error [Object] failure value.
       def initialize(error, types = [])
-        super()
+        super(types)
         @error = error
-        @types = types
       end
 
       # Returns false.

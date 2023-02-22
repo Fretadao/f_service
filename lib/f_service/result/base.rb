@@ -7,6 +7,8 @@ module FService
     #
     # @abstract
     class Base
+      attr_reader :types
+
       %i[and_then successful? failed? value value! error].each do |method_name|
         define_method(method_name) do |*_args|
           raise NotImplementedError, "called #{method_name} on class Result::Base"
@@ -14,8 +16,9 @@ module FService
       end
 
       # You usually shouldn't call this directly. See {FService::Base#Failure} and {FService::Base#Success}.
-      def initialize
+      def initialize(types = [])
         @handled = false
+        @types = types
         @matching_types = []
       end
 
@@ -23,7 +26,7 @@ module FService
       def type
         FService.deprecate!(name: "#{self.class}##{__method__}", alternative: '#types', from: caller[0])
 
-        Array(@matching_types).first
+        types.size == 1 ? types.first : Array(@matching_types).first
       end
 
       # This hook runs if the result is successful.

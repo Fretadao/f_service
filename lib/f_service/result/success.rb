@@ -13,16 +13,15 @@ module FService
     #   @return [Object] the provided types for the result. Defaults to nil.
     # @api public
     class Success < Result::Base
-      attr_reader :value, :types
+      attr_reader :value
 
       # Creates a successful operation.
       # You usually shouldn't call this directly. See {FService::Base#Success}.
       #
       # @param value [Object] success value.
       def initialize(value, types = [])
-        super()
+        super(types)
         @value = value
-        @types = types
       end
 
       # Returns true.
