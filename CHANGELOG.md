@@ -10,11 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- ### Removed -->
 ---
 
+## 0.3.0
 ### Added
-- Add Rspec Helper mock_service;
-- Add Rspec Matcher have_succeed_with and have_failed_with;
-- Add `Success()`, `Failure()`, `Check()`, `Try()` now can be multipe types;
-- Changed depreacate `Result#type` method.
+- Added Rspec Helper `#mock_service` #41;
+- Added Rspec Matcher `#have_succeed_with` and `#have_failed_with` #41;
+- Added `Success()`, `Failure()`, `Check()`, `Try()` now can be multipe types #41;
+- Changed Depreacate `Result#type` method #41;
+- Changed Deprecate method `#then` for Success and Failure classes #40
+- Added RSpec support for mock and match results #35
+- Deprecate method `#then` for Success and Failure classes #40;
+- Removed deprecated method `#on` #33
+- Changed Capture just one callback per result #30;
 
 ## 0.2.0
 ### Added

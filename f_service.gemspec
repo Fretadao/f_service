@@ -7,8 +7,8 @@ require 'f_service/version'
 Gem::Specification.new do |spec|
   spec.name    = 'f_service'
   spec.version = FService::VERSION
-  spec.authors = ['Matheus Richard']
-  spec.email   = ['matheusrichardt@gmail.com']
+  spec.authors = ['Fretadao Tech Team']
+  spec.email = ['tech@fretadao.com.br']
 
   spec.summary     = 'A small, monad-based service class'
   spec.description = <<-DESCRIPTION
