@@ -189,11 +189,14 @@ class UsersController < BaseController
 end
 ```
 
-### Types precedence
+### Type precedence
 
-FService matches types from left to right, from more specific to more generic.
-Example (:unprocessable_entity, :client_error, :http_response)
-Then, result will match first :unprocessable_entity, after :client_error, after :http_response, then not matched.
+FService matches the service's types from left to right, from more specific to more generic.
+For example, the following result `Failure(:unprocessable_entity, :client_error, :http_response)` will match in the following order:
+1. `:unprocessable_entity`;
+2. `:client_error`;
+3. `:http_response`;
+4. unmatched block;
 
 ### Chaining services
 
