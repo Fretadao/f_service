@@ -24,6 +24,7 @@ RSpec.describe FService::Result::Base do
       let(:test_class) do
         Class.new(described_class) do
           def initialize
+            super
             @types = %i[success]
           end
         end
@@ -39,6 +40,7 @@ RSpec.describe FService::Result::Base do
       let(:test_class) do
         Class.new(described_class) do
           def initialize
+            super
             @types = %i[ok success http_response]
             @matching_types = %i[ok success]
           end

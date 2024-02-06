@@ -113,6 +113,7 @@ RSpec.describe FService::Base do
     let(:double_number) do
       Class.new(described_class) do
         def initialize(number:)
+          super()
           @number = number
         end
 

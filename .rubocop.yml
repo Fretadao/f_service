@@ -2,6 +2,7 @@ require:
   - rubocop-rspec
 
 AllCops:
+  TargetRubyVersion: 3.0.0
   NewCops: enable
 
 Layout/LineLength:
@@ -30,4 +31,8 @@ RSpec/ExampleLength:
   Max: 20
 
 RSpec/NestedGroups:
+  Enabled: false
+
+##### RUBYGEMS #####
+Gemspec/RequireMFA:
   Enabled: false
