@@ -280,7 +280,7 @@ require 'f_service/rspec'
 
 ### Mocking a result
 
-```
+```rb
 mock_service(Uer::Create)
 # => Mocks a successful result with all values nil
 
@@ -313,6 +313,8 @@ expect(User::Create.(name: 'Joe')).to have_succeed_with(:created).and_value(an_i
 expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes)
 
 expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes).and_error({ name: ["can't be blank"] })
+
+expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes).and_error(a_hash_including(name: ["can't be blank"]))
 ```
 
 ## API Docs

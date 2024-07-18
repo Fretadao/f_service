@@ -6,7 +6,7 @@ RSpec::Matchers.define :have_failed_with do |*expected_types|
   match do |actual|
     matched = actual.is_a?(FService::Result::Failure) && actual.types == expected_types
 
-    matched &&= actual.error == @expected_error if defined?(@expected_error)
+    matched &&= values_match?(@expected_error, actual.error) if defined?(@expected_error)
 
     matched
   end
