@@ -110,12 +110,6 @@ module FService
         self
       end
 
-      # See #and_then
-      def then
-        FService.deprecate!(name: "#{self.class}##{__method__}", alternative: '#and_then', from: caller[0])
-        and_then
-      end
-
       # Outputs a string representation of the object
       #
       #

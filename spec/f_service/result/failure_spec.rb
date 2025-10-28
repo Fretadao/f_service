@@ -178,26 +178,6 @@ RSpec.describe FService::Result::Failure do
     end
   end
 
-  describe '#then' do
-    subject(:failure) { described_class.new('Pax', :ok) }
-
-    before { allow(FService).to receive(:deprecate!) }
-
-    context 'when a block is given' do
-      it 'returns itself', :aggregate_failures do
-        expect(failure.then { 'an error happened' }).to eq(failure)
-        expect(FService).to have_received(:deprecate!)
-      end
-    end
-
-    context 'when a block is passed as argument' do
-      it 'does not yields the block', :aggregate_failures do
-        expect { |block| failure.then(&block) }.not_to yield_control
-        expect(FService).to have_received(:deprecate!)
-      end
-    end
-  end
-
   describe '#to_s' do
     subject(:failure) { described_class.new('Whoops!') }
 
