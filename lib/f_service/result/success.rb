@@ -83,13 +83,6 @@ module FService
         yield(*to_ary)
       end
 
-      # See #and_then
-      def then(&block)
-        FService.deprecate!(name: "#{self.class}##{__method__}", alternative: '#and_then', from: caller[0])
-
-        and_then(&block)
-      end
-
       # Returns itself to the given block.
       # Use this to chain multiple actions or service calls (only valid when they return a Result).
       # It works just like the `.and_then` method, but only runs if service is a Failure.
