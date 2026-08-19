@@ -319,9 +319,8 @@ mock_service(
 ```
 
 > `value:` fills `#value` on a Success and `#error` on a Failure — it is the payload either
-> way. `types:` also accepts a bare symbol, but an array reads consistently. There is an older
-> `type:` (singular) argument: it still works and prints a deprecation warning pointing at
-> `types:`.
+> way. `types:` also accepts a bare symbol, but an array reads consistently. The deprecated
+> singular `type:` argument was removed in 0.4.0.
 
 Need the Result object itself rather than a stub — to pass it around in a unit test, say?
 `f_service_result` builds one:

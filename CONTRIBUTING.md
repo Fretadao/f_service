@@ -33,6 +33,55 @@ Pull requests are squash-merged, so **the PR title becomes the commit message**
 release-please reads. Get the title right even when the individual commits are
 messy — a workflow checks it on every pull request.
 
+## Deprecating something
+
+This gem is public, so nothing user-facing is removed without warning first. The cycle is
+deprecate, ship at least one release with the warning, then remove in a release that says so.
+
+**1. Mark it.** Keep the method working and warn from inside it. `FService.deprecate!` exists
+for exactly this and prints a message pointing at the replacement, including the caller:
+
+```ruby
+# @deprecated Use {#Success} instead.
+def success(data = nil)
+  FService.deprecate!(
+    name: "#{self.class}##{__method__}",
+    alternative: '#Success',
+    from: caller[0]
+  )
+
+  Result::Success.new(data)
+end
+```
+
+For an argument rather than a whole method, use `FService.deprecate_argument_name`:
+
+```ruby
+FService.deprecate_argument_name(
+  name: 'mock_service',
+  argument_name: :type,
+  alternative: 'mock_service(..., types: [:created])',
+  from: caller[0]
+)
+```
+
+Add the `@deprecated` YARD tag too — it shows up in the API docs on RubyDoc.
+
+**2. Ship it.** A commit that only deprecates is a `feat:` (new warning, nothing breaks) and
+goes out in a normal minor release. Say in the commit body what replaces it.
+
+**3. Remove it, later.** In a separate release, drop the method and its specs, and use
+`feat!:` with a `BREAKING CHANGE:` footer so release-please bumps accordingly and writes the
+`⚠ BREAKING CHANGES` section. Grep the README for the removed name — documentation that still
+promises the old API is worse than no documentation.
+
+> Do not skip the middle step. `#success`, `#failure` and `#result` were deprecated in 0.2.0
+> with a note saying they would go "on the next release", and were only removed in 0.4.0 —
+> three releases later. Better to over-warn than to break someone quietly.
+
+The two `FService.deprecate*` helpers sit unused between deprecations. That is expected: they
+are the tooling for this process, not dead code, and the next deprecation picks them up again.
+
 ## Releasing (release-please)
 
 Releases are automated with [release-please](https://github.com/googleapis/release-please);
