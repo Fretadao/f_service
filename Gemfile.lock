@@ -25,6 +25,7 @@ GEM
     nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
+    ostruct (0.6.3)
     parallel (1.24.0)
     parser (3.3.0.5)
       ast (~> 2.4.1)
@@ -36,7 +37,7 @@ GEM
       pry (>= 0.9.10, < 0.15)
     racc (1.8.1)
     rainbow (3.1.1)
-    rake (13.0.1)
+    rake (13.4.2)
     regexp_parser (2.9.0)
     reverse_markdown (2.1.1)
       nokogiri
@@ -106,9 +107,10 @@ PLATFORMS
 
 DEPENDENCIES
   f_service!
+  ostruct
   pry
   pry-nav
-  rake (~> 13.0.0)
+  rake (~> 13.4)
   rspec (~> 3.0)
   rubocop (~> 1.60.2)
   rubocop-rspec
@@ -117,4 +119,4 @@ DEPENDENCIES
   yard
 
 BUNDLED WITH
-   2.3.5
+  4.0.18
