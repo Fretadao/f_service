@@ -3,23 +3,11 @@
 require 'spec_helper'
 
 RSpec.describe FService::Base do
-  describe '#success' do
-    subject(:response) { described_class.new.success('yay!') }
-
-    it { expect(response.value).to eq('yay!') }
-  end
-
   describe '#Success' do
     subject(:response) { described_class.new.Success(:ok, data: 'yay!') }
 
     it { expect(response.types).to contain_exactly(:ok) }
     it { expect(response.value).to eq('yay!') }
-  end
-
-  describe '#failure' do
-    subject(:response) { described_class.new.failure('Whoops!') }
-
-    it { expect(response.error).to eq('Whoops!') }
   end
 
   describe '#Failure' do
@@ -93,22 +81,6 @@ RSpec.describe FService::Base do
     end
   end
 
-  describe '#result' do
-    subject(:response) { described_class.new.result(condition) }
-
-    context 'when condition is true' do
-      let(:condition) { 1 < 2 }
-
-      it { expect(response).to be_successful }
-    end
-
-    context 'when condition is false' do
-      let(:condition) { 1 > 2 }
-
-      it { expect(response).to be_failed }
-    end
-  end
-
   describe '.to_proc' do
     let(:double_number) do
       Class.new(described_class) do
@@ -134,7 +106,7 @@ RSpec.describe FService::Base do
     let(:test_service) do
       Class.new(described_class) do
         def run
-          success('This service is alright')
+          Success(:ok, data: 'This service is alright')
         end
       end
     end

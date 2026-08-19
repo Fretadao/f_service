@@ -78,36 +78,6 @@ module FService
       raise NotImplementedError, 'Services must implement #run'
     end
 
-    # Returns a successful operation.
-    # You'll probably want to return this inside {#run}.
-    #
-    #
-    # @example
-    #   class User::ValidateAge < FService::Base
-    #     def initialize(age:)
-    #       @age = age
-    #     end
-    #
-    #     def run
-    #       return failure(status: 'No age given!', data: @age) if age.blank?
-    #       return failure(status: 'Too young!', data: @age) if age < 18
-    #
-    #       success(status: 'Valid age.', data: @age)
-    #     end
-    #   end
-    #
-    # @deprecated Use {#Success} instead.
-    # @return [Result::Success] a successful operation
-    def success(data = nil)
-      FService.deprecate!(
-        name: "#{self.class}##{__method__}",
-        alternative: '#Success',
-        from: caller[0]
-      )
-
-      Result::Success.new(data)
-    end
-
     # Returns a successful result.
     # You can optionally specify a list of types and a value for your result.
     # You'll probably want to return this inside {#run}.
@@ -228,68 +198,6 @@ module FService
       Success(*types, data: res)
     rescue *catch => e
       Failure(*types, data: e)
-    end
-
-    # Returns a failed operation.
-    # You'll probably want to return this inside {#run}.
-    # @example
-    #   class User::ValidateAge < FService::Base
-    #     def initialize(age:)
-    #       @age = age
-    #     end
-    #
-    #     def run
-    #       return failure(status: 'No age given!', data: @age) if age.blank?
-    #       return failure(status: 'Too young!', data: @age) if age < 18
-    #
-    #       success(status: 'Valid age.', data: @age)
-    #     end
-    #   end
-    #
-    # @deprecated Use {#Failure} instead.
-    # @return [Result::Failure] a failed operation
-    def failure(data = nil)
-      FService.deprecate!(
-        name: "#{self.class}##{__method__}",
-        alternative: '#Failure',
-        from: caller[0]
-      )
-
-      Result::Failure.new(data)
-    end
-
-    # Return either {Result::Failure Success} or {Result::Failure Failure}
-    # given the condition.
-    #
-    # @example
-    #   class YearIsLeap < FService::Base
-    #     def initialize(year:)
-    #       @year = year
-    #     end
-    #
-    #     def run
-    #       return failure(status: 'No year given!', data: @year) if @year.nil?
-    #
-    #       result(leap?, @year)
-    #     end
-    #
-    #     private
-    #
-    #     def leap?
-    #       ((@year % 4).zero? && @year % 100 != 0) || (@year % 400).zero?
-    #     end
-    #   end
-    #
-    # @deprecated Use {#Check} instead.
-    # @return [Result::Success, Result::Failure]
-    def result(condition, data = nil)
-      FService.deprecate!(
-        name: "#{self.class}##{__method__}",
-        alternative: '#Check',
-        from: caller[0]
-      )
-
-      condition ? success(data) : failure(data)
     end
   end
 end
