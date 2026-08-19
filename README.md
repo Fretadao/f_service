@@ -69,11 +69,12 @@ You can optionally specify a list of types which represents that result and a va
 class User::Create < FService::Base
   # ...
   def run
-    return Failure(:no_name, :invalid_attribute) if @name.nil?
+    return Failure(:invalid_name, data: { name: ["can't be blank"] }) if @name.nil?
 
     user = UserRepository.create(name: @name)
+
     if user.save
-      Success(:success, :created, data: user)
+      Success(:created, data: user)
     else
       Failure(:creation_failed, data: user.errors)
     end
@@ -82,6 +83,11 @@ end
 ```
 
 > Remember, you **have** to return an `FService::Result` at the end of your services.
+
+> Always give your results a type. It says what happened, not just whether it worked, so
+> callers can branch on the reason and a failure is readable in a log without opening the
+> service. Pass the payload in `data:`, including on failures — otherwise `#error` is `nil`
+> and whoever serializes it has nothing to show.
 
 ### Using your service
 
@@ -117,7 +123,7 @@ class UsersController < BaseController
 end
 ```
 
-> Note that you're not limited to using services inside controllers. They're just PORO's (Play Old Ruby Objects), so you can use in controllers, models, etc. (even other services!).
+> Note that you're not limited to using services inside controllers. They're just PORO's (Plain Old Ruby Objects), so you can use in controllers, models, etc. (even other services!).
 
 ### Pattern matching
 
@@ -126,70 +132,65 @@ The code above could be rewritten using the `#on_success` and `#on_failure` hook
 ```ruby
 class UsersController < BaseController
   def create
-    User::Create.(user_params)
-                .on_success { |value| return json_success(value) }
-                .on_failure { |error| return json_error(error) }
-  end
-end
-```
-
-Or else it is possible to specify an unhandled option to ensure that the callback will process that message anyway the
-error.
-
-```ruby
-class UsersController < BaseController
-  def create
-    User::Create.(user_params)
-                .on_success(unhandled: true) { |value| return json_success(value) }
-                .on_failure(unhandled: true) { |error| return json_error(error) }
-  end
-end
-```
-
-```ruby
-class UsersController < BaseController
-  def create
-    User::Create.(user_params)
-                .on_success { |value| return json_success(value) }
-                .on_failure { |error| return json_error(error) }
+    User::Create
+      .call(user_params)
+      .on_success { |user| return json_success(user) }
+      .on_failure { |errors| return json_error(errors) }
   end
 end
 ```
 
 > You can ignore any of the callbacks, if you want to.
 
+Once you start matching specific types (below), a result whose type none of the hooks
+mention falls through untouched. Pass `unhandled: true` to run a callback for exactly those
+leftovers:
+
+```ruby
+class UsersController < BaseController
+  def create
+    User::Create
+      .call(user_params)
+      .on_success(:created) { |user| return json_success(user) }
+      .on_failure(unhandled: true) { |errors| return json_error(errors) }
+  end
+end
+```
+
 Going further, you can match the Result type, in case you want to handle them differently:
 
 ```ruby
 class UsersController < BaseController
   def create
-    User::Create.(user_params)
-                .on_success(:user_created) { |value| return json_success(value) }
-                .on_success(:user_already_exists) { |value| return json_success(value) }
-                .on_failure(:invalid_data) { |error| return json_error(error) }
-                .on_failure(:critical_error) do |error|
-                  MyLogger.report_failure(error)
+    User::Create
+      .call(user_params)
+      .on_success(:created) { |user| return json_success(user) }
+      .on_failure(:invalid_name) { |errors| return json_error(errors) }
+      .on_failure(:creation_failed) do |errors|
+        MyLogger.report_failure(errors)
 
-                  return json_error(error)
-                end
+        return json_error(errors)
+      end
   end
 end
 ```
 
 It's possible to provide multiple types to the hooks too. If the result type matches any of the given types,
-the hook will run.
+the hook will run. Say the service also answers `Success(:already_exists, data: user)` when the
+name is taken — both outcomes are fine for the caller:
 
 ```ruby
 class UsersController < BaseController
   def create
-    User::Create.(user_params)
-                .on_success(:user_created, :user_already_exists) { |value| return json_success(value) }
-                .on_failure(:invalid_data) { |error| return json_error(error) }
-                .on_failure(:critical_error) do |error|
-                  MyLogger.report_failure(error)
+    User::Create
+      .call(user_params)
+      .on_success(:created, :already_exists) { |user| return json_success(user) }
+      .on_failure(:invalid_name) { |errors| return json_error(errors) }
+      .on_failure(:creation_failed) do |errors|
+        MyLogger.report_failure(errors)
 
-                  return json_error(error)
-                end
+        return json_error(errors)
+      end
   end
 end
 ```
@@ -211,9 +212,10 @@ If some step fails, it will short circuit the call chain.
 ```ruby
 class UsersController < BaseController
   def create
-    result = User::Create.(user_params)
-                         .and_then { |user| User::Login.(user) }
-                         .and_then { |user| User::SendWelcomeEmail.(user) }
+    result = User::Create
+      .call(user_params)
+      .and_then { |user| User::Login.(user) }
+      .and_then { |user| User::SendWelcomeEmail.(user) }
 
     if result.successful?
       json_success(result.value)
@@ -229,17 +231,23 @@ You can use the `.to_proc` method on FService::Base to avoid explicit inputs whe
 ```ruby
 class UsersController < BaseController
   def create
-    result = User::Create.(user_params)
-                         .and_then(&User::Login)
-                         .and_then(&User::SendWelcomeEmail)
+    result = User::Create
+      .call(user_params)
+      .and_then(&User::Login)
+      .and_then(&User::SendWelcomeEmail)
     # ...
   end
 end
 ```
 
+> **Coming from 0.2.x?** `Success#then` and `Failure#then` were deprecated in 0.3.0 and
+> removed in 0.4.0. Use `#and_then`, which has always been their alias and behaves
+> identically. Note that `#then` also exists on every Ruby object since 2.6, so a leftover
+> call does not raise — it silently yields the Result itself instead of its value.
+
 ### `Check` and `Try`
 
-You can use `Check` to converts a boolean to a Result, truthy values map to `Success`, and falsey values map to `Failures`:
+You can use `Check` to convert a boolean into a Result: truthy values map to `Success`, falsey values to `Failure`.
 
 ```ruby
 Check(:math_works) { 1 < 2 }
@@ -253,73 +261,117 @@ Check(:math_works) { 1 > 2 }
 using the parameter `catch`.
 
 ```ruby
-class IHateEvenNumbers < FService::Base
+class Number::DrawOdd < FService::Base
   def run
-    Try(:rand_int) do
-      n = rand(1..10)
-      raise "Yuck! It's a #{n}" if n.even?
+    Try(:drawn_number) do
+      drawn_number = rand(1..10)
+      raise "Yuck! It's a #{drawn_number}" if drawn_number.even?
 
-      n
+      drawn_number
     end
   end
 end
 
-IHateEvenNumbers.call
-# => #<Success @value=9, @types=[:rand_int]>
+Number::DrawOdd.call
+# => #<Success @value=9, @types=[:drawn_number]>
 
-IHateEvenNumbers.call
-# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:rand_int]>
+Number::DrawOdd.call
+# => #<Failure @error=#<RuntimeError: Yuck! It's a 4>, @types=[:drawn_number]>
 ```
 
 ## Testing
 
-We provide some helpers and matchers to make ease to test code envolving Fservice services.
+We provide helpers and matchers to make it easier to test code involving FService services.
 
-To make available in the system, in the file 'spec/spec_helper.rb' or 'spec/rails_helper.rb'
+To make them available, add the following require to `spec/spec_helper.rb` or
+`spec/rails_helper.rb`:
 
-add the folowing require:
-
-```rb
+```ruby
 require 'f_service/rspec'
 ```
 
 ### Mocking a result
 
-```rb
-mock_service(Uer::Create)
-# => Mocks a successful result with all values nil
+`mock_service` stubs the service's `#call` and returns the Result you describe. It is a stub,
+not a message expectation: it does not assert that the service was called, so add your own
+`expect(...).to have_received(:call)` when that is the point of the test.
 
-mock_service(Uer::Create, result: :success)
-# => Mocks a successful result with all values nil
+```ruby
+mock_service(User::Create)
+# => stubs a successful result, with no types and a nil value
 
-mock_service(Uer::Create, result: :success, types: [:created, :success])
-# => Mocks a successful result with type created
+mock_service(User::Create, result: :success, types: [:created])
+# => stubs a Success typed :created
 
-mock_service(Uer::Create, result: :success, types: :created, value: instance_spy(User))
-# => Mocks a successful result with type created and a value
+mock_service(User::Create, result: :success, types: [:created], value: instance_spy(User))
+# => stubs a Success typed :created carrying a value
 
-mock_service(Uer::Create, result: :failure)
-# => Mocs a failure with all nil values
+mock_service(User::Create, result: :failure, types: [:invalid_name])
+# => stubs a Failure typed :invalid_name, with a nil error
 
-mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error])
-# => Mocs a failure with a failure type
+mock_service(
+  User::Create,
+  result: :failure,
+  types: [:invalid_name],
+  value: { name: ["can't be blank"] }
+)
+# => stubs a Failure typed :invalid_name carrying an error
+```
 
-mock_service(User::Create, result: :failure, types: [:unprocessable_entity, :client_error], value: { name: ["can't be blank"] })
-# => Mocs a failure with a failure type and an error value
+> `value:` fills `#value` on a Success and `#error` on a Failure — it is the payload either
+> way. `types:` also accepts a bare symbol, but an array reads consistently. There is an older
+> `type:` (singular) argument: it still works and prints a deprecation warning pointing at
+> `types:`.
+
+Need the Result object itself rather than a stub — to pass it around in a unit test, say?
+`f_service_result` builds one:
+
+```ruby
+result = f_service_result(:failure, { name: ["can't be blank"] }, [:invalid_name])
+# => #<Failure @error={name: ["can't be blank"]}, @types=[:invalid_name]>
 ```
 
 ### Matching a result
 
-```rb
+```ruby
 expect(User::Create.(name: 'Joe')).to have_succeed_with(:created)
 
 expect(User::Create.(name: 'Joe')).to have_succeed_with(:created).and_value(an_instance_of(User))
 
-expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes)
+expect(User::Create.(name: nil)).to have_failed_with(:invalid_name)
 
-expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes).and_error({ name: ["can't be blank"] })
+expect(User::Create.(name: nil))
+  .to have_failed_with(:invalid_name).and_error({ name: ["can't be blank"] })
 
-expect(User::Create.(name: nil)).to have_failed_with(:invalid_attributes).and_error(a_hash_including(name: ["can't be blank"]))
+expect(User::Create.(name: nil))
+  .to have_failed_with(:invalid_name).and_error(a_hash_including(name: ["can't be blank"]))
+```
+
+> The matchers compare the type list for **equality**, not inclusion. A service answering
+> `Success(:created, :persisted)` is matched by `have_succeed_with(:created, :persisted)` —
+> `have_succeed_with(:created)` alone fails. Name every type the result carries.
+
+Putting it together, a spec for the service built above:
+
+```ruby
+RSpec.describe User::Create do
+  subject(:create_user) { described_class.call(name: name) }
+
+  context 'when the name is given' do
+    let(:name) { 'Joe' }
+
+    it { is_expected.to have_succeed_with(:created).and_value(an_instance_of(User)) }
+  end
+
+  context 'when the name is missing' do
+    let(:name) { nil }
+
+    it 'fails naming the offending attribute' do
+      expect(create_user)
+        .to have_failed_with(:invalid_name).and_error(a_hash_including(:name))
+    end
+  end
+end
 ```
 
 ## API Docs
