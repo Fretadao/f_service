@@ -82,7 +82,7 @@ GEM
     simplecov_json_formatter (0.1.2)
     tsort (0.2.0)
     unicode-display_width (2.5.0)
-    yard (0.9.36)
+    yard (0.9.44)
 
 PLATFORMS
   ruby
