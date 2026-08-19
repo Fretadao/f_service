@@ -25,7 +25,7 @@ Add this line to your application's Gemfile:
 
 <!-- x-release-please-start-version -->
 ```ruby
-gem 'f_service', '~> 0.4.0'
+gem 'f_service', '~> 0.4.1'
 ```
 <!-- x-release-please-end-version -->
 
