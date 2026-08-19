@@ -8,7 +8,14 @@
       "package-name": "f_service",
       "version-file": "lib/f_service/version.rb",
       "extra-files": [
-        { "type": "generic", "path": "README.md" }
+        {
+          "type": "generic",
+          "path": "README.md"
+        },
+        {
+          "type": "generic",
+          "path": "spec/f_service_spec.rb"
+        }
       ]
     }
   }
