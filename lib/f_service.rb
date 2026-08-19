@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'f_service/base'
+require_relative 'f_service/version'
 
 # A small, monad-based service class
 #
