@@ -6,7 +6,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'ostruct' # Required by rake on Ruby 4.0+ (no longer a default gem)
+  # Left the stdlib in Ruby 4.0 and are no longer default gems. Until now they
+  # reached the lockfile as transitive dependencies of solargraph.
+  gem 'benchmark' # Required by rubocop
+  gem 'ostruct' # Required by rake
   gem 'pry'
   gem 'pry-nav'
   gem 'rake', '~> 13.4'
@@ -18,8 +21,8 @@ group :docs do
   gem 'yard'
 end
 
-group :optional do
-  gem 'solargraph'
+group :development do
+  gem 'ruby-lsp', require: false
 end
 
 group :test do

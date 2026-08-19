@@ -26,10 +26,20 @@ Gem::Specification.new do |spec|
   spec.metadata['documentation_uri'] = 'https://www.rubydoc.info/gems/f_service'
   spec.metadata['changelog_uri'] = 'https://github.com/Fretadao/f_service/blob/master/CHANGELOG.md'
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
+  # Ship only what a consumer of the gem needs: the library, the docs and the
+  # licence. Everything else tracked in the repository is development tooling and
+  # was being packaged until now — CI workflows, git hooks, the Gemfile, and so on.
+  development_only = %r{
+    ^(bin|test|spec|features)/    # console/setup scripts and test suites
+    | ^\.git                      # .gitignore, .github/, .githooks/
+    | ^\.rubocop                  # linter configuration
+    | ^(Gemfile|Rakefile)         # development entrypoints
+    | ^CONTRIBUTING               # contributor documentation
+    | release-please              # release automation configuration
+  }x
+
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+    `git ls-files -z`.split("\x0").grep_v(development_only)
   end
   spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
