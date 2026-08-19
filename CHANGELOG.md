@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0](https://github.com/Fretadao/f_service/compare/v0.3.1...v0.4.0) (2026-08-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* Failure#then and Success#then were removed; use #and_then, which has always been their alias. Base#success, Base#failure and Base#result were removed; use #Success, #Failure and #Check. Result#type was removed; use #types. The mock_service `type:` argument was removed; use `types:` with an array.
+
+### Features
+
+* remove deprecated Failure#then, Success#then and the 0.2.0 leftovers ([#63](https://github.com/Fretadao/f_service/issues/63)) ([69b4e80](https://github.com/Fretadao/f_service/commit/69b4e8099cfdb9850ecab656779436ac9cf16d09))
+
 ## 0.3.1
 ### Added
  - Drop Support to Ruby 2.6 and 2.7
