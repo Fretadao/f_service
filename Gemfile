@@ -6,9 +6,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'ostruct' # Required by rake on Ruby 4.0+ (no longer a default gem)
   gem 'pry'
   gem 'pry-nav'
-  gem 'rake', '~> 13.0.0'
+  gem 'rake', '~> 13.4'
   gem 'rubocop', '~> 1.60.2', require: false
   gem 'rubocop-rspec', require: false
 end

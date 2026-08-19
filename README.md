@@ -23,9 +23,14 @@ It uses the Result monad for handling operations.
 
 Add this line to your application's Gemfile:
 
+<!-- x-release-please-start-version -->
 ```ruby
-gem 'f_service'
+gem 'f_service', '~> 0.3.1'
 ```
+<!-- x-release-please-end-version -->
+
+> The version above is kept current automatically on every release; pin to
+> whichever version you prefer.
 
 And then execute:
 
@@ -325,11 +330,17 @@ You can access the API docs [here](https://www.rubydoc.info/gems/f_service/).
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that allows you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
+
+Releases are automated: the version, the `CHANGELOG.md`, the git tag and the push to
+[rubygems.org](https://rubygems.org) are all derived from
+[Conventional Commits](https://www.conventionalcommits.org/) by release-please. There
+is no version to edit and no release command to run by hand — see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/Fretadao/f_service.
+Bug reports and pull requests are welcome on GitHub at https://github.com/Fretadao/f_service. Read [CONTRIBUTING.md](CONTRIBUTING.md) first — it covers the commit conventions the release automation depends on.
 
 ## License
 

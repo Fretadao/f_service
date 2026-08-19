@@ -10,19 +10,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        ruby: [3.0, 3.1, 3.2, 3.3]
+        # 3.0 and 3.1 are gone: the lockfile needs bundler >= 4 to resolve ostruct
+        # (which left the stdlib in Ruby 4.0), and bundler 4 itself requires Ruby
+        # >= 3.2. Both are also past end-of-life. The gemspec still declares
+        # `>= 3.0.0`, so nothing breaks for consumers on older rubies.
+        ruby: ['3.2', '3.3', '3.4', '4.0']
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
       - name: Set up Ruby ${{ matrix.ruby }}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
       - name: Build and test with Rake
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
-          bundle exec rake
+        run: bundle exec rake
       - name: Rubocop Linter Action
         run: bundle exec rubocop --parallel
