@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    # Conventional Commits: `chore:` keeps dependency bumps out of the released
+    # CHANGELOG, which release-please builds from feat:/fix: commits.
+    commit-message:
+      prefix: "chore"
+
+  - package-ecosystem: "github-actions" # Actions used by .github/workflows
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "ci"
