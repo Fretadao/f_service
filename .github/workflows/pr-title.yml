@@ -1,0 +1,34 @@
+name: PR title
+
+# Pull requests are squash-merged, so the PR title becomes the commit message
+# release-please reads to decide the next version. A contributor who never ran
+# bin/setup has no commit-msg hook, so this is the only check that reaches them.
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      # Safe with pull_request_target because this job never checks out the
+      # pull request's code — it only reads the title.
+      - uses: amannn/action-semantic-pull-request@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            refactor
+            perf
+            chore
+            ci
+            docs
+            test
+            style
+            build
+            revert
