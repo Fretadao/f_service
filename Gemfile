@@ -13,7 +13,7 @@ group :development, :test do
   gem 'pry'
   gem 'pry-nav'
   gem 'rake', '~> 13.4'
-  gem 'rubocop', '~> 1.89.0', require: false
+  gem 'rubocop', '~> 1.90.0', require: false
   gem 'rubocop-rspec', require: false
 end
 
