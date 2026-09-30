@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0](https://github.com/Fretadao/f_service/compare/v0.4.1...v0.5.0) (2026-09-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* specs that call a mocked service with arguments its initializer rejects now fail with ArgumentError, and mock_service / f_service_result raise ArgumentError for a result other than :success or :failure (e.g. :failed).
+
+### Features
+
+* verify mock_service calls against the service initializer [CU-86akqxnfz] ([#77](https://github.com/Fretadao/f_service/issues/77)) ([c4efd45](https://github.com/Fretadao/f_service/commit/c4efd4588a337302e5b40e9ba8ff262984d333ee))
+
 ## [0.4.1](https://github.com/Fretadao/f_service/compare/v0.4.0...v0.4.1) (2026-08-19)
 
 
