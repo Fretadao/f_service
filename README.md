@@ -322,6 +322,34 @@ mock_service(
 > way. `types:` also accepts a bare symbol, but an array reads consistently. The deprecated
 > singular `type:` argument was removed in 0.4.0.
 
+`result:` accepts only `:success` or `:failure`. Anything else raises `ArgumentError` instead of
+silently becoming a Failure — a typo like `result: :failed` used to pass for the wrong reason.
+
+#### Calls are checked against the service's signature
+
+Every call to a mocked service runs the service's real `initialize` with the call's arguments,
+so a call the service would reject fails the spec with `ArgumentError` — the same error it
+would raise in production. The service's `#run` is never executed.
+
+```ruby
+class User::Create < FService::Base
+  def initialize(name:)
+    @name = name
+  end
+end
+
+mock_service(User::Create, types: [:created])
+
+User::Create.(name: 'John')          # => the mocked Success
+User::Create.()                      # => ArgumentError: missing keyword: :name
+User::Create.(name: 'John', age: 42) # => ArgumentError: unknown keyword: :age
+```
+
+When a spec starts failing here after an upgrade, the mock was hiding a call the service no
+longer accepts: fix the call (or the service), not the mock. A test double passed as the
+service (`class_double(...)`) has no real initializer, so its calls are not checked — mock the
+real service class to get the check.
+
 Need the Result object itself rather than a stub — to pass it around in a unit test, say?
 `f_service_result` builds one:
 
